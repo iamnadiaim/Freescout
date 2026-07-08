@@ -1,0 +1,141 @@
+/* settings */
+
+.end-user-portal-form {
+    padding-top: 20px;
+}
+
+.end-user-portal-form .form-group {
+    margin-bottom: 12px;
+}
+
+
+.submit-ticket-title-group {
+    margin-top: -5px;
+}
+
+.portal-url-text {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.end-user-portal-form .control-label {
+    font-weight: normal;
+    color: #25384b;
+}
+
+.end-user-portal-form .help-block {
+    margin-top: 10px;
+    color: #7f8fa4;
+}
+
+.end-user-footer {
+    min-height: 170px;
+    resize: vertical;
+}
+
+.checkbox-label {
+    font-weight: normal;
+    color: #25384b;
+}
+
+.checkbox-inline {
+    margin-right: 18px;
+}
+
+/* TOGGLE SWITCH - SMALL */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 38px;
+    height: 20px;
+    margin-bottom: 0;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    background-color: #ccc;
+    border-radius: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+    background-color: #0084d1;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(18px);
+}
+
+.end-user-widget-heading {
+    margin-top: 35px;
+}
+
+.end-user-widget-form .form-group {
+    margin-bottom: 22px;
+}
+
+.end-user-widget-form .control-label {
+    font-weight: normal;
+    color: #25384b;
+}
+
+.widget-auto-save-status {
+    margin-left: 10px;
+    color: #7f8fa4;
+    font-size: 13px;
+}
+
+.widget-color-wrapper {
+    display: flex;
+    width: 485px;
+    max-width: 100%;
+}
+
+.widget-color-input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.widget-color-picker {
+    width: 45px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid #cfd8e3;
+    border-left: none;
+    cursor: pointer;
+}
+
+.widget-select {
+    width: 485px;
+    max-width: 100%;
+}
+
+.widget-code-box {
+    width: 750px;
+    max-width: 100%;
+    min-height: 125px;
+    resize: vertical;
+    font-family: Consolas, monospace;
+    color: #4b5563;
+}

@@ -11,14 +11,15 @@
   <php>
     <env name="APP_ENV" value="testing"/>
     <env name="DB_CONNECTION" value="testing"/>
+    <env name="DB_DATABASE" value="freescout-test"/>
     <env name="CACHE_DRIVER" value="array"/>
     <env name="SESSION_DRIVER" value="array"/>
     <env name="QUEUE_DRIVER" value="sync"/>
-    <env name="APP_KEY" value="value_from_phpunit"/>
+    <env name="APP_KEY" value="base64:AjqV762YlXbauAUXbuJ1bHnNcfVLnoSNmipYQl4tLSA="/>
   </php>
-  <coverage>
-    <include>
-      <directory suffix=".php">./app</directory>
-    </include>
-  </coverage>
+    <coverage>
+        <include>
+            <directory suffix=".php">./Modules/LaporPoliwangi</directory>
+        </include>
+    </coverage>
 </phpunit>

@@ -1,0 +1,573 @@
+/* =========================================================
+       WRAPPER
+       ========================================================= */
+
+.nc-setting-wrapper {
+    width: 100%;
+    max-width: 1050px;
+    margin-top: 32px;
+    padding-right: 25px;
+    padding-bottom: 35px;
+}
+
+.nc-error-list {
+    margin: 5px 0 0;
+    padding-left: 20px;
+}
+
+/* =========================================================
+       HEADER / TOOLBAR
+       ========================================================= */
+
+.nc-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.nc-toolbar-content {
+    min-width: 0;
+}
+
+.nc-toolbar-title {
+    margin: 0;
+    color: #17324d;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.nc-toolbar-help {
+    max-width: 720px;
+    margin: 5px 0 0;
+    color: #8798b3;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.nc-add-btn {
+    min-width: 128px;
+    height: 34px;
+    padding: 0 15px;
+    color: #ffffff;
+    background: #0078d7;
+    border-color: #0078d7;
+    border-radius: 2px;
+    font-size: 13px;
+    line-height: 32px;
+    white-space: nowrap;
+}
+
+.nc-add-btn:hover,
+.nc-add-btn:focus,
+.nc-add-btn:active {
+    color: #ffffff;
+    background: #006bc1;
+    border-color: #006bc1;
+}
+
+/* =========================================================
+       CHANNEL PANEL
+       ========================================================= */
+
+.nc-list-panel {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e1e7ed;
+    border-radius: 3px;
+}
+
+.nc-list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 0 16px;
+    color: #17324d;
+    background: #f7f9fb;
+    border-bottom: 1px solid #e1e7ed;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nc-channel-count {
+    color: #8798b3;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+/* =========================================================
+       TABLE
+       ========================================================= */
+
+.nc-table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.nc-table {
+    width: 100%;
+    margin: 0;
+}
+
+.nc-table > thead > tr > th {
+    padding: 11px 14px;
+    color: #718399;
+    background: #ffffff;
+    border-bottom: 1px solid #e5eaf0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.nc-table > tbody > tr > td {
+    padding: 14px;
+    vertical-align: middle;
+    border-top: 1px solid #edf0f3;
+}
+
+.nc-table > tbody > tr:first-child > td {
+    border-top: 0;
+}
+
+.nc-table > tbody > tr:hover {
+    background: #fbfcfd;
+}
+
+/* =========================================================
+       CHANNEL INFORMATION
+       ========================================================= */
+
+.nc-channel-info {
+    display: flex;
+    align-items: center;
+    min-width: 190px;
+}
+
+.nc-channel-icon {
+    display: flex;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 11px;
+    color: #ffffff;
+    background: #8294a8;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.nc-channel-icon.nc-type-telegram {
+    background: #279bd3;
+}
+
+.nc-channel-icon.nc-type-whatsapp {
+    background: #2aaa67;
+}
+
+.nc-channel-content {
+    min-width: 0;
+}
+
+.nc-channel-name {
+    overflow: hidden;
+    color: #17324d;
+    font-size: 13px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nc-channel-detail {
+    overflow: hidden;
+    max-width: 280px;
+    margin-top: 3px;
+    color: #8798b3;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nc-type-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    color: #53677c;
+    background: #eef2f6;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.nc-mailbox-name {
+    color: #17324d;
+    font-size: 13px;
+}
+
+.nc-all-mailboxes {
+    color: #8798b3;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* =========================================================
+       STATUS
+       ========================================================= */
+
+.nc-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.nc-status-active {
+    color: #16724a;
+    background: #e7f5ed;
+}
+
+.nc-status-inactive {
+    color: #768698;
+    background: #edf1f4;
+}
+
+.nc-status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 6px;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+/* =========================================================
+       ACTIONS
+       ========================================================= */
+
+.nc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+    min-width: 310px;
+}
+
+.nc-inline-form {
+    display: inline-block;
+    margin: 0;
+}
+
+.nc-actions .btn {
+    height: 30px;
+    margin: 0;
+    padding: 4px 9px;
+    border-radius: 2px;
+    font-size: 12px;
+    line-height: 19px;
+    white-space: nowrap;
+}
+
+.nc-actions .glyphicon {
+    margin-right: 2px;
+}
+
+/* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+.nc-empty-state {
+    padding: 55px 20px;
+    color: #8798b3;
+    text-align: center;
+}
+
+.nc-empty-icon {
+    margin-bottom: 12px;
+    color: #a5b3c1;
+    font-size: 28px;
+}
+
+.nc-empty-state h4 {
+    margin: 0 0 7px;
+    color: #17324d;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.nc-empty-state p {
+    margin: 0 0 17px;
+    color: #8798b3;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+/* =========================================================
+       FORM
+       ========================================================= */
+
+.nc-modal .form-group {
+    margin-bottom: 18px;
+}
+
+.nc-modal label {
+    color: #17324d;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nc-modal .form-control {
+    height: 36px;
+    border-color: #d8e0e8;
+    border-radius: 2px;
+    box-shadow: none;
+    font-size: 13px;
+}
+
+.nc-modal .form-control:focus {
+    border-color: #5ba4dc;
+    box-shadow: 0 0 0 1px rgba(0, 120, 215, 0.08);
+}
+
+.nc-modal .help-block {
+    margin-top: 6px;
+    margin-bottom: 0;
+    color: #8798b3;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   DRIVER CONFIG SECTION
+   ========================================================= */
+
+.nc-config-section {
+    display: none !important;
+    margin: 18px 0;
+    padding: 16px;
+    background: #f7f9fb;
+    border: 1px solid #e1e7ed;
+    border-radius: 3px;
+}
+
+.nc-config-section.nc-config-visible {
+    display: block !important;
+}
+
+.nc-config-section[style*="display: block"] {
+    display: block !important;
+}
+
+.nc-config-title {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    color: #17324d;
+    border-bottom: 1px solid #e1e7ed;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nc-config-title .glyphicon {
+    margin-right: 5px;
+}
+
+.nc-active-checkbox {
+    margin-top: 18px;
+    margin-bottom: 5px;
+}
+
+.nc-active-checkbox label {
+    color: #17324d;
+    font-weight: normal;
+}
+
+/* =========================================================
+       SWITCH
+       ========================================================= */
+
+.nc-switch-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.nc-switch {
+    position: relative;
+    display: inline-block;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 20px;
+    margin: 0;
+    vertical-align: middle;
+}
+
+.nc-switch input {
+    display: none;
+}
+
+.nc-slider {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    cursor: pointer;
+    background-color: #d2d2d2;
+    border-radius: 20px;
+    transition: 0.25s;
+}
+
+.nc-slider:before {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    width: 12px;
+    height: 12px;
+    content: "";
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: 0.25s;
+}
+
+.nc-switch input:checked + .nc-slider {
+    background-color: #1976c9;
+}
+
+.nc-switch input:checked + .nc-slider:before {
+    transform: translateX(18px);
+}
+
+.nc-switch-text {
+    color: #17324d;
+    font-size: 13px;
+    font-weight: normal;
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.nc-modal .modal-dialog {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.nc-modal .modal-content {
+    border: 0;
+    border-radius: 3px;
+    background: #ffffff;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.nc-modal .modal-header {
+    padding: 16px 20px;
+    color: #17324d;
+    background: #ffffff;
+    border-bottom: 1px solid #e1e7ed;
+    border-radius: 3px 3px 0 0;
+}
+
+.nc-modal .modal-header .close {
+    margin-top: 0;
+    color: #62768b;
+    opacity: 0.8;
+    text-shadow: none;
+}
+
+.nc-modal .modal-header .close:hover {
+    opacity: 1;
+}
+
+.nc-modal .modal-title {
+    color: #17324d;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.nc-modal .modal-title .glyphicon {
+    margin-right: 5px;
+}
+
+.nc-modal .modal-body {
+    padding: 22px;
+    background: #ffffff;
+}
+
+.nc-modal .modal-footer {
+    padding: 14px 22px;
+    background: #f7f9fb;
+    border-top: 1px solid #e1e7ed;
+    border-radius: 0 0 3px 3px;
+}
+
+.nc-modal .modal-footer .btn {
+    min-width: 75px;
+    height: 34px;
+    border-radius: 2px;
+}
+
+/* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+@media (max-width: 991px) {
+    .nc-setting-wrapper {
+        padding-right: 15px;
+    }
+
+    .nc-actions {
+        min-width: 280px;
+    }
+}
+
+@media (max-width: 767px) {
+    .nc-setting-wrapper {
+        margin-top: 20px;
+        padding-right: 0;
+    }
+
+    .nc-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .nc-add-btn {
+        width: 100%;
+    }
+
+    .nc-actions {
+        min-width: 280px;
+        justify-content: flex-start;
+    }
+
+    .nc-modal .modal-dialog {
+        margin: 15px;
+    }
+}
+.nc-channel-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nc-channel-icon i,
+.nc-channel-icon svg,
+.nc-driver-icon {
+    color: #fff;
+}
+
+.nc-driver-icon,
+.nc-whatsapp-icon {
+    width: 21px;
+    height: 21px;
+    display: inline-block;
+}
+
+.nc-type-whatsapp {
+    background: #25D366;
+}

@@ -1,0 +1,300 @@
+.saved-reply-list {
+    max-width: 1000px;
+    margin-top: 20px;
+}
+
+/* CARD */
+.saved-reply-card {
+    border: 1px solid #d6dde3;
+    border-radius: 4px;
+    background: #fff;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+/* HEADER */
+.saved-reply-header {
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+    cursor: pointer;
+    padding: 0 15px;
+    background: #fff;
+}
+
+.saved-reply-header:hover {
+    background: #f8fafb;
+}
+
+.drag-handle {
+    width: 35px;
+    color: #9aa7b2;
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* TITLE */
+.saved-reply-title {
+    flex: 1;
+    font-size: 16px;
+    color: #2f3d4a;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.saved-reply-title i {
+    color: #8a97a8;
+    font-size: 14px;
+}
+
+.saved-reply-title .label {
+    margin-left: 4px;
+    font-weight: normal;
+}
+
+/* BADGE */
+.badge-secondary {
+    background: #eef1f4;
+    color: #6b7885;
+    font-weight: normal;
+    padding: 5px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+/* Khusus kategori / parent */
+.saved-reply-card.is-category .saved-reply-header {
+    background: #f3f6f8;
+}
+
+.saved-reply-card.is-category .saved-reply-title {
+    font-weight: 600;
+}
+
+/* Khusus child reply */
+.saved-reply-card.is-child {
+    margin-left: 35px;
+}
+
+/* BODY */
+.saved-reply-body {
+    padding: 18px 25px;
+    border-top: 1px solid #e5e9ed;
+    background: #fbfcfd;
+}
+
+.saved-reply-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.saved-reply-row > label {
+    width: 110px;
+    padding-top: 7px;
+    font-weight: normal;
+    color: #5f6f7f;
+}
+
+.saved-reply-control {
+    flex: 1;
+    max-width: none;
+}
+
+.saved-reply-control .text-muted {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #8a97a8;
+}
+
+.saved-reply-row-editor {
+    align-items: flex-start;
+}
+
+.saved-reply-actions {
+    margin-left: 110px;
+    margin-top: 10px;
+}
+
+.saved-reply-empty {
+    padding: 15px;
+    border: 1px solid #d6dde3;
+    background: #fff;
+    color: #7d8a96;
+}
+
+/* SWITCH */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 22px;
+    margin-top: 5px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #c7d0d9;
+    transition: .2s;
+    border-radius: 22px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #fff;
+    transition: .2s;
+    border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+    background-color: #3197d6;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* MODAL CREATE */
+#savedReplyCreateForm .modal-dialog,
+.saved-reply-create {
+    width: 900px;
+    max-width: 92%;
+    margin: 30px auto;
+}
+
+#savedReplyCreateForm .modal-content {
+    border-radius: 4px;
+    border: none;
+    min-height: auto;
+}
+
+#savedReplyCreateForm .modal-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid #dfe5ea;
+}
+
+#savedReplyCreateForm .modal-title {
+    font-size: 17px;
+    font-weight: normal;
+    color: #2f3d4a;
+}
+
+#savedReplyCreateForm .modal-body {
+    padding: 16px 28px 8px 28px;
+}
+
+#savedReplyCreateForm .modal-footer,
+.saved-reply-create-footer {
+    border-top: none;
+    text-align: left;
+    padding-left: 118px;
+    padding-bottom: 22px;
+}
+
+#savedReplyCreateForm .saved-reply-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+#savedReplyCreateForm .saved-reply-row > label {
+    width: 90px;
+    padding-top: 7px;
+    font-size: 14px;
+    font-weight: normal;
+    color: #3f4d5a;
+}
+
+#savedReplyCreateForm .saved-reply-control {
+    flex: 1;
+    max-width: none;
+}
+
+#savedReplyCreateForm input.form-control,
+#savedReplyCreateForm select.form-control {
+    height: 34px;
+    border: 1px solid #c9d3dd;
+    border-radius: 4px;
+    box-shadow: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .saved-reply-list {
+        max-width: 100%;
+    }
+
+    .saved-reply-card.is-child {
+        margin-left: 0;
+    }
+
+    .saved-reply-row,
+    #savedReplyCreateForm .saved-reply-row {
+        display: block;
+    }
+
+    .saved-reply-row > label,
+    #savedReplyCreateForm .saved-reply-row > label {
+        width: 100%;
+        padding-top: 0;
+        margin-bottom: 5px;
+    }
+
+    .saved-reply-actions,
+    #savedReplyCreateForm .modal-footer,
+    .saved-reply-create-footer {
+        margin-left: 0;
+        padding-left: 28px;
+    }
+}
+.saved-reply-children {
+    padding: 0 12px 12px 12px;
+}
+
+.saved-reply-card.is-child {
+    margin-left: 0;
+    margin-top: 8px;
+    margin-bottom: 0;
+    border: 1px solid #d6dde3;
+    background: #fff;
+}
+
+.saved-reply-card.is-child .saved-reply-header {
+    min-height: 42px;
+    background: #fff;
+}
+
+.saved-reply-card.is-child .saved-reply-title {
+    font-size: 15px;
+}
+
+.saved-reply-card.is-child .drag-handle {
+    width: 32px;
+    font-size: 15px;
+}
+
+.saved-reply-delete-btn {
+    color: #d9534f !important;
+}
+
+.saved-reply-delete-btn:hover,
+.saved-reply-delete-btn:focus {
+    color: #c9302c !important;
+    text-decoration: underline;
+}

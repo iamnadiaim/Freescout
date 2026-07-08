@@ -1,0 +1,346 @@
+/* CONTAINER */
+.custom-field-list {
+    margin: 25px 5px;
+}
+
+/* CARD FIELD */
+.custom-field-card {
+    border: 1px solid #d6dde3;
+    background: #fff;
+    margin-bottom: 10px;
+}
+
+/* HEADER */
+.custom-field-header {
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+    padding: 0 18px;
+    background: #fff;
+    border-bottom: 1px solid #e5e9ed;
+    cursor: pointer;
+}
+
+.custom-field-header:hover {
+    background: #f7f9fb;
+}
+
+/* DRAG ICON */
+.drag-handle {
+    width: 28px;
+    color: #aab4bd;
+    font-size: 13px;
+}
+
+/* TITLE */
+.custom-field-title {
+    flex: 1;
+    font-size: 16px;
+    color: #2f3d4a;
+}
+
+/* BADGE TYPE */
+.badge-secondary {
+    background: #eef1f4;
+    color: #4b5965;
+    font-weight: normal;
+    padding: 5px 8px;
+    border-radius: 3px;
+}
+
+/* BODY */
+.custom-field-body {
+    background: #fff;
+    padding: 18px 20px 26px 80px;
+}
+
+/* FORM ROW */
+.custom-field-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.custom-field-row > label {
+    width: 170px;
+    padding-top: 8px;
+    padding-right: 38px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: normal;
+    color: #2f3d4a;
+}
+
+.custom-field-control {
+    flex: 1;
+    max-width: 1105px;
+}
+
+/* INPUT */
+.custom-field-control .form-control {
+    height: 36px;
+    font-size: 13px;
+    border-radius: 3px;
+}
+
+/* OPTIONS */
+.options-wrapper {
+    max-width: 1105px;
+}
+
+.option-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.option-drag {
+    width: 42px;
+    height: 36px;
+    line-height: 34px;
+    text-align: center;
+    border: 1px solid #ccd4db;
+    border-right: 0;
+    background: #f9fafb;
+    color: #333;
+}
+
+.option-row .option-input {
+    flex: 1;
+    height: 36px;
+    border-radius: 0;
+}
+
+.btn-option-remove,
+.btn-option-add {
+    width: 46px;
+    height: 36px;
+    padding: 0;
+    border-radius: 0;
+    border: 1px solid #ccd4db;
+    background: #fff;
+    color: #333;
+}
+
+.btn-option-remove:hover,
+.btn-option-add:hover {
+    background: #f5f5f5;
+}
+
+.options-wrapper small {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #777;
+}
+
+/* TOGGLE SWITCH */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 38px;
+    height: 20px;
+    margin-top: 5px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #d6d6d6;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    width: 14px;
+    height: 14px;
+    left: 3px;
+    top: 3px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.switch input:checked + .slider {
+    background-color: #0076c8;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(18px);
+}
+
+/* BUTTON AREA */
+.custom-field-actions {
+    margin-left: 170px;
+    margin-top: 24px;
+}
+
+.custom-field-actions .btn-primary {
+    padding: 4px 10px;
+    font-size: 13px;
+    border-radius: 0;
+    margin-right: 18px;
+}
+
+.custom-field-actions .btn-link {
+    color: #d9534f;
+    text-decoration: none;
+    padding-left: 0;
+}
+
+.custom-field-actions .btn-link:hover {
+    color: #c9302c;
+    text-decoration: underline;
+}
+
+/* SUPPORT OLD CLASS */
+.custom-field-item {
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    cursor: pointer;
+}
+
+.custom-field-item:hover {
+    background: #f7f7f7;
+}
+
+.flex-grow {
+    flex: 1;
+}
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+    .custom-field-body {
+        padding: 18px;
+    }
+
+    .custom-field-row {
+        display: block;
+    }
+
+    .custom-field-row > label {
+        width: auto;
+        text-align: left;
+        padding-right: 0;
+        margin-bottom: 6px;
+    }
+
+    .custom-field-actions {
+        margin-left: 0;
+    }
+
+    /* CREATE FORM */
+    .custom-field-create {
+        width: 720px;
+        max-width: 95%;
+    }
+
+    .custom-field-create .modal-content {
+        border-radius: 4px;
+    }
+
+    .custom-field-create .modal-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .custom-field-create .modal-title {
+        font-size: 16px;
+        color: #2f3d4a;
+    }
+
+    /* Body digeser lebih ke kiri */
+    .custom-field-create .modal-body {
+        padding: 18px 35px 10px 18px;
+    }
+
+    .custom-field-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .custom-field-row > label {
+        width: 115px;
+        min-width: 115px;
+        margin-bottom: 0;
+        padding-right: 18px;
+        font-size: 13px;
+        font-weight: normal;
+        color: #2f3d4a;
+        text-align: right;
+    }
+
+    .custom-field-control {
+        flex: 1;
+        max-width: 540px;
+    }
+
+    /* Options */
+    .options-wrapper {
+        width: 100%;
+    }
+
+    .option-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .option-drag {
+        width: 18px;
+        color: #999;
+        text-align: center;
+        cursor: move;
+    }
+
+    .option-input {
+        flex: 1;
+    }
+
+    .btn-option-add,
+    .btn-option-remove {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        line-height: 32px;
+        text-align: center;
+    }
+
+    /* Kalau type tidak butuh banyak option */
+    .options-wrapper.single-option-mode .option-drag,
+    .options-wrapper.single-option-mode .btn-option-add,
+    .options-wrapper.single-option-mode .btn-option-remove {
+        display: none;
+    }
+
+    .options-wrapper.single-option-mode .option-row {
+        display: block;
+    }
+
+    .options-wrapper.single-option-mode .option-input {
+        width: 100%;
+    }
+
+    .options-wrapper small {
+        display: block;
+        margin-top: 4px;
+    }
+
+    /* Footer */
+    .custom-field-create-footer {
+        border-top: none;
+        text-align: left;
+        padding: 8px 35px 28px 133px;
+    }
+}
+

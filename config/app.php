@@ -268,7 +268,7 @@ return [
     | The list should be in sync with /storage/app/public/uploads/.htaccess and nginx config.
     |-------------------------------------------------------------------------
     */
-    'viewable_attachments'    => env('APP_VIEWABLE_ATTACHMENTS') 
+    'viewable_attachments'    => env('APP_VIEWABLE_ATTACHMENTS')
                                 ? explode(',', env('APP_VIEWABLE_ATTACHMENTS'))
                                 : ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'apng', 'bmp', 'gif', 'ico', 'cur', 'png', 'tif', 'tiff', 'webp', 'pdf', 'txt', 'diff', 'patch', 'json', 'mp3', 'wav', 'ogg', 'wma'],
 
@@ -287,11 +287,11 @@ return [
     | Same for APP_CUSTOMER_UPLOADABLE_MIME_TYPES.
     |-------------------------------------------------------------------------
     */
-    'customer_allowed_extensions'    => env('APP_CUSTOMER_ALLOWED_EXTENSIONS') 
+    'customer_allowed_extensions'    => env('APP_CUSTOMER_ALLOWED_EXTENSIONS')
                                 ? explode(',', env('APP_CUSTOMER_ALLOWED_EXTENSIONS'))
                                 : ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'mp3', 'wav', 'ogg', 'wma', 'pdf', 'txt', 'csv', 'doc', 'docx', 'xls', 'xlsx'],
 
-    'customer_allowed_mime_types'    => env('APP_CUSTOMER_ALLOWED_MIME_TYPES') 
+    'customer_allowed_mime_types'    => env('APP_CUSTOMER_ALLOWED_MIME_TYPES')
                                 ? explode(',', env('APP_CUSTOMER_ALLOWED_MIME_TYPES'))
                                 : ['image/jpg', 'image/jpeg', 'image/gif', 'image/bmp', 'image/x-ms-bmp', 'image/webp', 'audio/mpeg', 'audio/wav', 'audio/x-wav', 'audio/ogg', 'audio/x-ms-wma', 'application/pdf', 'text/plain', 'text/csv', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
 
@@ -469,9 +469,9 @@ return [
     /*
     |--------------------------------------------------------------------------
     | Use this option if you have many folders and you are experiencing
-    | performance issues. When this option is enabled sometimes it may take 
+    | performance issues. When this option is enabled sometimes it may take
     | several seconds for folders counters to update in the interface.
-    | 
+    |
     | https://github.com/freescout-helpdesk/freescout/pull/2982
     |-------------------------------------------------------------------------
     */
@@ -621,6 +621,8 @@ return [
         // Autodiscovery did not work for this one, becasuse it's composer.json
         // does not have a `extra` section.
         Codedge\Updater\UpdaterServiceProvider::class,
+
+        Modules\LaporPoliwangi\Providers\LaporPoliwangiServiceProvider::class,
     ],
 
     /*

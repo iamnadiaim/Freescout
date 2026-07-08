@@ -1,0 +1,300 @@
+.custom-field-view-block {
+    padding: 6px 8px;
+    border-top: 1px solid #e5e5e5;
+    background: #fff;
+}
+
+.custom-field-view-block .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -4px;
+    margin-right: -4px;
+}
+
+.custom-field-view-item {
+    margin-bottom: 6px;
+    padding-left: 4px;
+    padding-right: 4px;
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.custom-field-view-label {
+    display: block;
+    color: #8a97a8;
+    font-weight: normal;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.custom-field-edit-input {
+    width: 100%;
+    height: 28px;
+    padding: 3px 7px;
+    font-size: 13px;
+    border: 1px solid #cfd7df;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.custom-field-edit-textarea {
+    width: 100%;
+    min-height: 55px;
+    padding: 4px 7px;
+    font-size: 13px;
+    border: 1px solid #cfd7df;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.custom-field-save-status {
+    display: block;
+    min-height: 14px;
+    margin-top: 2px;
+    font-size: 11px;
+}
+
+.custom-field-saved {
+    color: #2ca24d;
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.custom-field-saved i {
+    color: #2ca24d;
+    margin-right: 3px;
+}
+
+.custom-field-error {
+    color: #d9534f;
+    font-size: 11px;
+}
+
+.custom-field-view-item .select2-container {
+    width: 100% !important;
+    display: block;
+    font-size: 13px;
+}
+
+.custom-field-view-item .select2-container--default .select2-selection--multiple {
+    min-height: 28px;
+    border: 1px solid #cfd7df;
+    border-radius: 3px;
+    background: #fff;
+}
+
+.custom-field-view-item .select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: 0 0 5px rgba(102, 175, 233, .6);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Saved Replies Dropdown
+|--------------------------------------------------------------------------
+*/
+
+.saved-replies-wrapper {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.saved-replies-button {
+    border: none;
+    background: transparent;
+    color: #7d8b99;
+    font-size: 16px;
+    width: 34px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+}
+
+.saved-replies-button:hover,
+.saved-replies-button.active {
+    color: #0078d7;
+    background: #f2f5f7;
+}
+
+.saved-replies-dropdown {
+    display: none;
+    position: absolute;
+    top: 34px;
+    right: 0;
+    width: 210px;
+    background: #fff;
+    border: 1px solid #d6dde3;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .15);
+    z-index: 99999;
+}
+
+.saved-replies-dropdown.show {
+    display: block;
+}
+
+.saved-replies-category-block {
+    border-bottom: 1px solid #e5e9ed;
+}
+
+.saved-replies-category-toggle {
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    background: #fff;
+    color: #2f3d4a;
+    text-align: left;
+    font-size: 13px;
+}
+
+.saved-replies-category-toggle .caret {
+    float: right;
+    margin-top: 7px;
+}
+
+.saved-replies-category-items {
+    display: none;
+    padding-bottom: 4px;
+}
+
+.saved-replies-category-block.open .saved-replies-category-items {
+    display: block;
+}
+
+.saved-replies-item {
+    display: block;
+    width: 100%;
+    padding: 7px 18px;
+    border: none;
+    background: #fff;
+    text-align: left;
+    font-size: 13px;
+    color: #2f3d4a;
+    cursor: pointer;
+}
+
+.saved-replies-empty,
+.saved-replies-empty-small {
+    padding: 8px 14px;
+    font-size: 12px;
+    color: #8a97a8;
+}
+
+.saved-replies-item:hover,
+.saved-replies-category-toggle:hover,
+.saved-replies-save-this:hover {
+    background: #eef6ff;
+    color: #006bb6;
+}
+
+.saved-replies-save-new {
+    border-top: 1px solid #e5e9ed;
+}
+
+.saved-replies-save-this {
+    width: 100%;
+    padding: 9px 10px;
+    border: none;
+    background: #fff;
+    color: #2f3d4a;
+    text-align: left;
+    font-size: 13px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Satisfaction Rating Badge
+|--------------------------------------------------------------------------
+*/
+
+.satisfaction-rating-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 3px 7px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #ffffff;
+    vertical-align: middle;
+    text-transform: uppercase;
+}
+
+.satisfaction-rating-badge i {
+    margin-left: 4px;
+    font-size: 9px;
+}
+
+.thread-replied-text {
+    margin-left: 4px;
+    color: #8a97a8;
+    font-weight: normal;
+}
+
+.rating-badge-great {
+    background: #35b86b;
+}
+
+.rating-badge-okay {
+    background: #f0ad4e;
+}
+
+.rating-badge-not-good {
+    background: #d9534f;
+}
+
+.rating-badge-default {
+    background: #7b8794;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Time Tracking Otomatis
+|--------------------------------------------------------------------------
+*/
+
+.tt-auto-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    background: #eef6ff;
+    color: #2678b9;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tt-auto-badge i {
+    font-size: 12px;
+}
+
+.tt-total-time {
+    margin-left: 10px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.tt-total-value {
+    color: #2f3d4a;
+    font-weight: 700;
+}
+
+.tt-timelogs-toggle {
+    margin-left: 10px;
+    border: none;
+    background: transparent;
+    color: #2678b9;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.tt-timelogs-panel {
+    display: none;
+    margin-top: 8px;
+}
+
+.tt-timelogs-panel.show {
+    display: block;
+}

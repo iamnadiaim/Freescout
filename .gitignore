@@ -37,3 +37,7 @@ Thumbs.db
 .phpunit.result.cache
 /.phpunit.cache
 .env.testing
+/vendor/
+/coverage/
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
