@@ -1,0 +1,14 @@
+{
+    "name": "LaporPoliwangi",
+    "alias": "laporpoliwangi",
+    "description": "Module tambahan untuk fitur Lapor Poliwangi seperti ticket number, custom field, time tracking, portal, dan notifikasi.",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\LaporPoliwangi\\Providers\\LaporPoliwangiServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
