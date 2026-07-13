@@ -15,6 +15,8 @@ class EndUserPortalAccount extends Model
         'password',
         'sso_provider',
         'sso_id',
+        'verification_token',
+        'email_verified_at',
     ];
 
     protected $hidden = [

@@ -32,7 +32,10 @@ class FatalErrorException extends \ErrorException
             $this->setTrace($trace);
         } elseif (null !== $traceOffset) {
             if (\function_exists('xdebug_get_function_stack')) {
-                $trace = xdebug_get_function_stack();
+                $trace = @xdebug_get_function_stack();
+                if (!$trace) {
+                    $trace = array();
+                }
                 if (0 < $traceOffset) {
                     array_splice($trace, -$traceOffset);
                 }

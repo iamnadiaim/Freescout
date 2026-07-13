@@ -40,6 +40,9 @@ class CreateEndUserPortalAccountsTable extends Migration
             $table->string('sso_provider', 100)->nullable();
             $table->string('sso_id', 191)->nullable();
 
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('verification_token')->nullable();
+
             $table->timestamps();
 
             /*

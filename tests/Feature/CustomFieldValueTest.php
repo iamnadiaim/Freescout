@@ -157,4 +157,25 @@ class CustomFieldValueTest extends TestCase
             $response->assertViewHas('values');
         }
     }
+
+    public function test_store_custom_field_validation_fails()
+    {
+        $field = CustomField::create([
+            'mailbox_id' => $this->mailbox->id,
+            'type' => 'text',
+            'name' => 'Required Field',
+            'required' => true
+        ]);
+
+        $response = $this->post('/test/cfv/store', [
+            'conversation_id' => $this->conversation->id,
+            'mailbox_id' => $this->mailbox->id,
+            'custom_fields' => [
+                $field->id => ''
+            ]
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+    }
 }

@@ -13,6 +13,14 @@ use Modules\LaporPoliwangi\Services\Notifications\NotificationWebhookFactory;
 
 class NotificationChannelController extends Controller
 {
+    private function authorizeAdmin()
+    {
+        $user = auth()->user();
+        if (!$user || !$user->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+    
     /**
      * @var NotificationSenderFactory
      */
@@ -52,6 +60,7 @@ class NotificationChannelController extends Controller
      */
     public function index()
     {
+        $this->authorizeAdmin();
         return redirect()->route('settings', [
             'section' => 'notification_channels',
         ]);
@@ -62,6 +71,7 @@ class NotificationChannelController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorizeAdmin();
         $validated = $this->validateChannel($request);
 
         try {
@@ -119,6 +129,7 @@ class NotificationChannelController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->authorizeAdmin();
         /** @var NotificationChannel $channel */
         $channel = NotificationChannel::findOrFail($id);
 
@@ -205,6 +216,7 @@ class NotificationChannelController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorizeAdmin();
         /** @var NotificationChannel $channel */
         $channel = NotificationChannel::findOrFail($id);
 
@@ -236,6 +248,7 @@ class NotificationChannelController extends Controller
      */
     public function toggleActive(Request $request, $id)
     {
+        $this->authorizeAdmin();
         /** @var NotificationChannel $channel */
         $channel = NotificationChannel::findOrFail($id);
 
@@ -306,6 +319,7 @@ class NotificationChannelController extends Controller
      */
     public function test($id)
     {
+        $this->authorizeAdmin();
         /** @var NotificationChannel $channel */
         $channel = NotificationChannel::findOrFail($id);
 

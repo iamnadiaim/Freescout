@@ -132,7 +132,7 @@
 
         .tt-summary {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: 16px;
             padding: 24px;
             text-align: left;
@@ -671,8 +671,8 @@
                 </div>
             </div>
 
-            <div class="tt-summary-card">
-                <div class="tt-summary-label">Fastest User</div>
+            <div class="tt-section tt-summary-card">
+                <div class="tt-summary-label">Petugas Tercepat</div>
                 <div>
                     <span class="tt-summary-value" style="font-size: 22px;">
                         @if($summary['fastest_user'])
@@ -689,8 +689,8 @@
                 </div>
             </div>
 
-            <div class="tt-summary-card">
-                <div class="tt-summary-label">Slowest User</div>
+            <div class="tt-section tt-summary-card">
+                <div class="tt-summary-label">Petugas Terlama</div>
                 <div>
                     <span class="tt-summary-value" style="font-size: 22px;">
                         @if($summary['slowest_user'])
@@ -730,203 +730,235 @@
 
         <div class="tt-content">
 
-            <div class="tt-section">
-                <h3 style="margin-top: 0; font-size: 16px; color: #1f2d3d; font-weight: bold; margin-bottom: 12px; padding-left: 20px;">Daily Trend (Hours)</h3>
-                <div class="tt-chart">
-                    <div class="tt-chart-grid">
-                        @foreach ($dailyChartScaleLabels as $index => $number)
-                            <div class="tt-grid-line" style="top: {{ $index * 10 }}%;">
-                                <span>{{ $number }}</span>
-                            </div>
-                        @endforeach
+            <div class="tt-two-columns">
+                <div class="tt-section" style="padding: 0; overflow: hidden;">
+                    <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px 20px;">
+                        <h3 style="margin: 0; font-size: 15px; color: #1e293b; font-weight: bold;">Tren Harian (Jam)</h3>
                     </div>
+                    <div style="padding: 20px;">
+                        <div class="tt-chart">
+                            <div class="tt-chart-grid">
+                                @foreach ($dailyChartScaleLabels as $index => $number)
+                                    <div class="tt-grid-line" style="top: {{ $index * 10 }}%;">
+                                        <span>{{ $number }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
 
-                    <div class="tt-chart-bars">
-                        @forelse ($dailyChartValues as $index => $value)
-                            @php
-                                $height = $dailyChartMaxScale > 0 ? ($value / $dailyChartMaxScale) * 100 : 0;
-                            @endphp
+                            <div class="tt-chart-bars">
+                                @forelse ($dailyChartValues as $index => $value)
+                                    @php
+                                        $height = $dailyChartMaxScale > 0 ? ($value / $dailyChartMaxScale) * 100 : 0;
+                                    @endphp
 
-                            <div class="tt-chart-bar-item">
-                                @if ($value > 0)
-                                    <span class="tt-chart-value">{{ number_format($value, 1) }}</span>
-                                @endif
+                                    <div class="tt-chart-bar-item">
+                                        @if ($value > 0)
+                                            <span class="tt-chart-value">{{ number_format($value, 1) }}</span>
+                                        @endif
 
-                                <div class="tt-chart-bar" style="height: {{ $height }}%; background: #4caf50;">
-                                    <div class="tt-chart-tooltip">
-                                        <div class="tt-chart-tooltip-title">
+                                        <div class="tt-chart-bar" style="height: {{ $height }}%; background: #4caf50;">
+                                            <div class="tt-chart-tooltip">
+                                                <div class="tt-chart-tooltip-title">
+                                                    {{ $dailyChartLabels[$index] }}
+                                                </div>
+
+                                                <div class="tt-chart-tooltip-row">
+                                                    <span class="tt-chart-tooltip-color" style="background: #4caf50;"></span>
+                                                    <span>{{ number_format($value, 1) }} hours</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <span class="tt-chart-label" title="{{ $dailyChartLabels[$index] }}">
                                             {{ $dailyChartLabels[$index] }}
-                                        </div>
-
-                                        <div class="tt-chart-tooltip-row">
-                                            <span class="tt-chart-tooltip-color" style="background: #4caf50;"></span>
-                                            <span>{{ number_format($value, 1) }} hours</span>
-                                        </div>
+                                        </span>
                                     </div>
-                                </div>
-
-                                <span class="tt-chart-label" title="{{ $dailyChartLabels[$index] }}">
-                                    {{ $dailyChartLabels[$index] }}
-                                </span>
+                                @empty
+                                @endforelse
                             </div>
-                        @empty
-                        @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="tt-section" style="margin-top: 30px;">
-                <h3 style="margin-top: 0; font-size: 16px; color: #1f2d3d; font-weight: bold; margin-bottom: 12px; padding-left: 20px;">Time Spent per User</h3>
-                <div class="tt-chart">
-                    <div class="tt-chart-grid">
-                        @foreach ($chartScaleLabels as $index => $number)
-                            <div class="tt-grid-line" style="top: {{ $index * 10 }}%;">
-                                <span>{{ $number }}</span>
-                            </div>
-                        @endforeach
+                <div class="tt-section" style="padding: 0; overflow: hidden;">
+                    <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px 20px;">
+                        <h3 style="margin: 0; font-size: 15px; color: #1e293b; font-weight: bold;">Waktu Pengerjaan per Petugas</h3>
                     </div>
+                    <div style="padding: 20px;">
+                        <div class="tt-chart">
+                            <div class="tt-chart-grid">
+                                @foreach ($chartScaleLabels as $index => $number)
+                                    <div class="tt-grid-line" style="top: {{ $index * 10 }}%;">
+                                        <span>{{ $number }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
 
-                    <div class="tt-chart-bars">
-                        @forelse ($chartValues as $index => $value)
-                            @php
-                                $height = $chartMaxScale > 0 ? ($value / $chartMaxScale) * 100 : 0;
-                            @endphp
+                            <div class="tt-chart-bars">
+                                @forelse ($chartValues as $index => $value)
+                                    @php
+                                        $height = $chartMaxScale > 0 ? ($value / $chartMaxScale) * 100 : 0;
+                                    @endphp
 
-                            <div class="tt-chart-bar-item">
-                                @if ($value > 0)
-                                    <span class="tt-chart-value">{{ number_format($value, 1) }}</span>
-                                @endif
+                                    <div class="tt-chart-bar-item">
+                                        @if ($value > 0)
+                                            <span class="tt-chart-value">{{ number_format($value, 1) }}</span>
+                                        @endif
 
-                                <div class="tt-chart-bar" style="height: {{ $height }}%;">
-                                    <div class="tt-chart-tooltip">
-                                        <div class="tt-chart-tooltip-title">
+                                        <div class="tt-chart-bar" style="height: {{ $height }}%;">
+                                            <div class="tt-chart-tooltip">
+                                                <div class="tt-chart-tooltip-title">
+                                                    {{ $chartLabels[$index] }}
+                                                </div>
+
+                                                <div class="tt-chart-tooltip-row">
+                                                    <span class="tt-chart-tooltip-color"></span>
+                                                    <span>{{ number_format($value, 1) }} hours</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <span class="tt-chart-label" title="{{ $chartLabels[$index] }}">
                                             {{ $chartLabels[$index] }}
-                                        </div>
-
-                                        <div class="tt-chart-tooltip-row">
-                                            <span class="tt-chart-tooltip-color"></span>
-                                            <span>{{ number_format($value, 1) }} hours</span>
-                                        </div>
+                                        </span>
                                     </div>
-                                </div>
-
-                                <span class="tt-chart-label" title="{{ $chartLabels[$index] }}">
-                                    {{ $chartLabels[$index] }}
-                                </span>
+                                @empty
+                                @endforelse
                             </div>
-                        @empty
-                        @endforelse
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="tt-section" style="margin-top: 30px;">
-                <table class="tt-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 24%;">Date</th>
-                            <th style="width: 24%;">Time Spent</th>
-                            <th>Total Updates</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($dailyReportData as $day)
-                            <tr>
-                                <td>
-                                    <strong>{{ $day['date'] }}</strong>
-                                </td>
-                                <td>
-                                    @if ($day['minutes'] > 0)
-                                        <span class="tt-time-main">
-                                            {{ $day['time_spent_label'] ?? '-' }}
-                                        </span>
-                                    @else
-                                        <span class="tt-muted">-</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($day['updates'] > 0)
-                                        <span class="tt-time-main">{{ $day['updates'] }} updates</span>
-                                    @else
-                                        <span class="tt-muted">-</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="tt-muted">
-                                    Belum ada data untuk filter ini.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="tt-section">
-                <table class="tt-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 24%;">User</th>
-                            <th style="width: 24%;">Time Spent</th>
-                            <th>Avg. Time Spent per Update</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($users as $user)
-                            <tr>
-                                <td>
-                                    <a class="tt-main-link" href="{{ route('users.profile', ['id' => $user->id]) }}">
-                                        {{ trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email }}
-                                    </a>
-                                </td>
-                                <td>
-                                    @if (!empty($user->time_spent_minutes) && $user->time_spent_minutes > 0)
-                                        <span class="tt-time-main">
-                                            {{ $user->time_spent_label ?? '-' }}
-                                        </span>
-                                    @else
-                                        <span class="tt-muted">-</span>
-                                    @endif
-
-                                    @if ($user->update_count > 0)
-                                        <span class="tt-time-small">{{ $user->update_count }} updates</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($user->avg_time_spent_label ?? false)
-                                        <span class="tt-time-main">{{ $user->avg_time_spent_label }}</span>
-                                    @elseif ($user->avg_hours_per_update > 0)
-                                        <span class="tt-time-main">{{ number_format($user->avg_hours_per_update, 2) }}
-                                            hours/update</span>
-                                    @else
-                                        <span class="tt-muted">-</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="tt-muted">
-                                    Belum ada user yang menindaklanjuti conversation pada filter ini.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
             </div>
 
             <div class="tt-two-columns">
-                <div class="tt-section">
-                    <table class="tt-table">
+                <div class="tt-section" style="padding: 0; overflow: hidden;">
+                    <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px 20px;">
+                        <h3 style="margin: 0; font-size: 15px; color: #1e293b; font-weight: bold;">Catatan Harian (Daily Log)</h3>
+                    </div>
+                    <table class="tt-table" style="margin: 0; border: none;">
                         <thead>
                             <tr>
-                                <th>Conversation</th>
-                                <th style="width: 36%;">Time Spent</th>
+                                <th style="width: 24%; border-top: none;">Tanggal</th>
+                                <th style="width: 24%; border-top: none;">Time Spent</th>
+                                <th style="border-top: none;">Total Updates</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($dailyReportData as $day)
+                                <tr>
+                                    <td>
+                                        <strong>{{ $day['date'] }}</strong>
+                                    </td>
+                                    <td>
+                                        @if ($day['minutes'] > 0)
+                                            <span class="tt-time-main">
+                                                {{ $day['time_spent_label'] ?? '-' }}
+                                            </span>
+                                        @else
+                                            <span class="tt-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($day['updates'] > 0)
+                                            <span class="tt-time-main">{{ $day['updates'] }} updates</span>
+                                        @else
+                                            <span class="tt-muted">-</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="tt-muted">
+                                        Belum ada data untuk filter ini.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tt-section" style="padding: 0; overflow: hidden;">
+                    <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px 20px;">
+                        <h3 style="margin: 0; font-size: 15px; color: #1e293b; font-weight: bold;">Kinerja Petugas (Agent Performance)</h3>
+                    </div>
+                    <table class="tt-table" style="margin: 0; border: none;">
+                        <thead>
+                            <tr>
+                                <th style="width: 24%; border-top: none;">Petugas</th>
+                                <th style="width: 24%; border-top: none;">Time Spent</th>
+                                <th style="border-top: none;">Rata-rata / Update</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($users as $user)
+                                <tr>
+                                    <td>
+                                        <a class="tt-main-link" href="{{ route('users.profile', ['id' => $user->id]) }}">
+                                            {{ trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @if (!empty($user->time_spent_minutes) && $user->time_spent_minutes > 0)
+                                            <span class="tt-time-main">
+                                                {{ $user->time_spent_label ?? '-' }}
+                                            </span>
+                                        @else
+                                            <span class="tt-muted">-</span>
+                                        @endif
+
+                                        @if ($user->update_count > 0)
+                                            <span class="tt-time-small">{{ $user->update_count }} updates</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($user->avg_time_spent_label ?? false)
+                                            <span class="tt-time-main">{{ $user->avg_time_spent_label }}</span>
+                                        @elseif ($user->avg_hours_per_update > 0)
+                                            <span class="tt-time-main">{{ number_format($user->avg_hours_per_update, 2) }}
+                                                hours/update</span>
+                                        @else
+                                            <span class="tt-muted">-</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="tt-muted">
+                                        Belum ada petugas yang menindaklanjuti pada filter ini.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tt-two-columns">
+                <div class="tt-section" style="padding: 0; overflow: hidden;">
+                    <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 15px; color: #1e293b; font-weight: bold;">
+                            Daftar Laporan (Conversations)
+                        </h3>
+                        <div class="tt-filter-tabs" style="display: inline-flex; background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 4px;">
+                            <button type="button" class="tt-tab-btn active" data-target="all" style="border: none; background: #ffffff; color: #0ea5e9; font-weight: 700; padding: 6px 16px; font-size: 13px; border-radius: 6px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.2s;">Semua</button>
+                            <button type="button" class="tt-tab-btn" data-target="done" style="border: none; background: transparent; color: #475569; font-weight: 600; padding: 6px 16px; font-size: 13px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Sudah Ditindaklanjuti</button>
+                            <button type="button" class="tt-tab-btn" data-target="pending" style="border: none; background: transparent; color: #475569; font-weight: 600; padding: 6px 16px; font-size: 13px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Tertunda</button>
+                        </div>
+                    </div>
+                    
+                    <table class="tt-table" id="ttConversationTable" style="margin: 0; border: none;">
+                        <thead>
+                            <tr>
+                                <th style="border-top: none;">Laporan (Conversation)</th>
+                                <th style="width: 36%; border-top: none;">Time Spent</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($conversations as $conversation)
-                                <tr>
+                                @php
+                                    $isDone = !empty($conversation->time_spent_minutes) && $conversation->time_spent_minutes > 0;
+                                @endphp
+                                <tr class="tt-conv-row" data-status="{{ $isDone ? 'done' : 'pending' }}">
                                     <td>
                                         <a class="tt-main-link"
                                             href="{{ route('conversations.view', ['id' => $conversation->id]) }}">
@@ -944,7 +976,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if (!empty($conversation->time_spent_minutes) && $conversation->time_spent_minutes > 0)
+                                        @if ($isDone)
                                             <span class="tt-time-main">
                                                 {{ $conversation->time_spent_label ?? '-' }}
                                             </span>
@@ -962,14 +994,60 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                    <script {!! \Helper::cspNonceAttr() !!}>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const btns = document.querySelectorAll('.tt-tab-btn');
+                            const rows = document.querySelectorAll('.tt-conv-row');
+
+                            btns.forEach(btn => {
+                                btn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    const status = this.getAttribute('data-target');
+
+                                    // Reset all buttons styling
+                                    btns.forEach(b => {
+                                        b.style.background = 'transparent';
+                                        b.style.color = '#475569';
+                                        b.style.fontWeight = '600';
+                                        b.style.boxShadow = 'none';
+                                        b.classList.remove('active');
+                                    });
+
+                                    // Set active button styling
+                                    this.style.background = '#ffffff';
+                                    this.style.color = '#0ea5e9';
+                                    this.style.fontWeight = '700';
+                                    this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                                    this.classList.add('active');
+
+                                    // Filter rows
+                                    rows.forEach(row => {
+                                        if (status === 'all') {
+                                            row.style.display = '';
+                                        } else {
+                                            if (row.getAttribute('data-status') === status) {
+                                                row.style.display = '';
+                                            } else {
+                                                row.style.display = 'none';
+                                            }
+                                        }
+                                    });
+                                });
+                            });
+                        });
+                    </script>
                 </div>
 
-                <div class="tt-section">
-                    <table class="tt-table">
+                <div class="tt-section" style="padding: 0; overflow: hidden;">
+                    <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 12px 20px;">
+                        <h3 style="margin: 0; font-size: 15px; color: #1e293b; font-weight: bold;">Pengguna / Pelapor (Customer)</h3>
+                    </div>
+                    <table class="tt-table" style="margin: 0; border: none;">
                         <thead>
                             <tr>
-                                <th>Customer</th>
-                                <th style="width: 36%;">Time Spent</th>
+                                <th style="border-top: none;">Customer</th>
+                                <th style="width: 36%; border-top: none;">Time Spent</th>
                             </tr>
                         </thead>
                         <tbody>

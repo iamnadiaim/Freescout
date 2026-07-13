@@ -24,6 +24,22 @@ class CustomFieldValueController extends Controller
         }
 
         foreach ($customFieldsInput as $customFieldId => $value) {
+            $customField = \Modules\LaporPoliwangi\Models\CustomField::find($customFieldId);
+            if (!$customField) continue;
+
+            $rules = $customField->getValidationRules('');
+            $messages = $customField->getValidationMessages('');
+
+            $validator = \Illuminate\Support\Facades\Validator::make(
+                [$customFieldId => $value],
+                $rules,
+                $messages
+            );
+
+            if ($validator->fails()) {
+                return redirect()->back()->with('error', $validator->errors()->first());
+            }
+
             if (is_array($value)) {
                 $value = implode(', ', $value);
             }

@@ -47,5 +47,5 @@
 </style>
 
 <div class="portal-footer-global" id="portalFooterText">
-    {!! $footerText !!}
+    {{ $footerText }}
 </div>

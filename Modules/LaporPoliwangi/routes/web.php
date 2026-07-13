@@ -82,20 +82,6 @@ Route::group([
 
     /*
 |--------------------------------------------------------------------------
-| Time Tracking AJAX
-|--------------------------------------------------------------------------
-*/
-    Route::post('/time-tracking/status', [
-        'uses' => 'TimeTrackingController@status',
-        'as'   => 'laporpoliwangi.time_tracking.status',
-    ]);
-
-    Route::post('/time-tracking/stop', [
-        'uses' => 'TimeTrackingController@stop',
-        'as'   => 'laporpoliwangi.time_tracking.stop',
-    ]);
-    /*
-|--------------------------------------------------------------------------
 | Time Tracking Status
 |--------------------------------------------------------------------------
 | Timer berjalan otomatis dari hook.
@@ -182,7 +168,8 @@ Route::group([
 |--------------------------------------------------------------------------
 */
 Route::group([
-    'middleware' => ['web', 'auth'],
+    'middleware' => ['web', 'auth', 'roles'],
+    'roles'      => ['admin'],
     'namespace'  => 'Modules\LaporPoliwangi\Http\Controllers',
 ], function () {
 
@@ -226,7 +213,7 @@ Route::group([
 |--------------------------------------------------------------------------
 */
 Route::group([
-    'middleware' => ['web'],
+    'middleware' => ['web', 'throttle:30,1'],
     'namespace'  => 'Modules\LaporPoliwangi\Http\Controllers',
 ], function () {
 
@@ -243,7 +230,7 @@ Route::group([
 |--------------------------------------------------------------------------
 */
 Route::group([
-    'middleware' => ['web'],
+    'middleware' => ['web', 'throttle:60,1'], // 60 requests per minute for general browsing
     'namespace'  => 'Modules\LaporPoliwangi\Http\Controllers',
 ], function () {
 
@@ -257,19 +244,14 @@ Route::group([
         'as'   => 'laporpoliwangi.end_user_portal.register',
     ]);
 
-    Route::post('/help/register', [
-        'uses' => 'EndUserPortalController@registerEndUserSubmit',
-        'as'   => 'laporpoliwangi.end_user_portal.register.submit',
-    ]);
-
     Route::get('/help/login', [
         'uses' => 'EndUserPortalController@loginEndUser',
         'as'   => 'laporpoliwangi.end_user_portal.login_end_user',
     ]);
 
-    Route::post('/help/login', [
-        'uses' => 'EndUserPortalController@loginEndUserSubmit',
-        'as'   => 'laporpoliwangi.end_user_portal.login.submit',
+    Route::get('/help/verify/{token}', [
+        'uses' => 'EndUserPortalController@verifyEmail',
+        'as'   => 'laporpoliwangi.end_user_portal.verify',
     ]);
 
     Route::get('/help/logout', [
@@ -302,14 +284,35 @@ Route::group([
         'as'   => 'laporpoliwangi.end_user_portal.submit_ticket',
     ]);
 
-    Route::post('/help/{mailbox_id}', [
-        'uses' => 'EndUserPortalController@submitTicket',
-        'as'   => 'laporpoliwangi.end_user_portal.submit',
-    ]);
-
     Route::get('/help/{mailbox_id}/ticket/{conversation_id}', [
         'uses' => 'EndUserPortalController@ticketDetail',
         'as'   => 'laporpoliwangi.end_user_portal.ticket_detail',
+    ]);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Public End User Portal Routes (Form Submissions)
+|--------------------------------------------------------------------------
+*/
+Route::group([
+    'middleware' => ['web', 'throttle:15,1'], // 15 requests per minute for form submissions (stricter limit)
+    'namespace'  => 'Modules\LaporPoliwangi\Http\Controllers',
+], function () {
+
+    Route::post('/help/register', [
+        'uses' => 'EndUserPortalController@registerEndUserSubmit',
+        'as'   => 'laporpoliwangi.end_user_portal.register.submit',
+    ]);
+
+    Route::post('/help/login', [
+        'uses' => 'EndUserPortalController@loginEndUserSubmit',
+        'as'   => 'laporpoliwangi.end_user_portal.login.submit',
+    ]);
+
+    Route::post('/help/{mailbox_id}', [
+        'uses' => 'EndUserPortalController@submitTicket',
+        'as'   => 'laporpoliwangi.end_user_portal.submit',
     ]);
 
     Route::post('/help/{mailbox_id}/ticket/{conversation_id}/reply', [
@@ -320,24 +323,5 @@ Route::group([
     Route::post('/help/{mailbox_id}/ticket/{conversation_id}/satisfaction-rating', [
         'uses' => 'SatisfactionRatingController@submitRating',
         'as'   => 'laporpoliwangi.end_user_portal.submit_satisfaction_rating',
-    ]);
-});
-
-
-/*
-|--------------------------------------------------------------------------
-| Public Notification Webhook Routes
-|--------------------------------------------------------------------------
-| Tidak pakai auth karena Telegram/WhatsApp mengirim request dari luar.
-|--------------------------------------------------------------------------
-*/
-Route::group([
-    'middleware' => ['web'],
-    'namespace'  => 'Modules\LaporPoliwangi\Http\Controllers',
-], function () {
-
-    Route::post('/notification/webhook/{type}', [
-        'uses' => 'NotificationWebhookController@handle',
-        'as'   => 'notification_channels.webhook',
     ]);
 });

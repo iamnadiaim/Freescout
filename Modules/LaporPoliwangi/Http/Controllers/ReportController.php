@@ -36,9 +36,16 @@ class ReportController extends Controller
 
         /*
          * Mailbox yang boleh dilihat user login.
-         * Kita collect supaya aman walaupun mailboxesCanView() mengembalikan array.
+         * Kita filter agar HANYA mailbox yang dikelola (punya izin 'Edit Mailbox') yang tampil di report.
+         * Global Admin tentu saja bisa melihat semuanya.
          */
-        $mailboxes = collect($authUser->mailboxesCanView(true));
+        $mailboxes = collect($authUser->mailboxesCanView(true))->filter(function ($m) use ($authUser) {
+            return $authUser->isAdmin() || $authUser->hasManageMailboxPermission($m->id, \App\Mailbox::ACCESS_PERM_EDIT);
+        });
+
+        if (!$authUser->isAdmin() && $mailboxes->isEmpty()) {
+            abort(403, 'Unauthorized action.');
+        }
 
         /*
          * Mailbox terpilih.
@@ -110,8 +117,6 @@ class ReportController extends Controller
          */
         $conversationQuery = Conversation::where('mailbox_id', $selectedMailboxId);
 
-        $selectedTag = $request->get('tag', '');
-
         /*
         * Ambil custom field berdasarkan mailbox terpilih.
         * Nanti field ini akan muncul sebagai filter tambahan.
@@ -151,14 +156,6 @@ class ReportController extends Controller
             $selectedCustomFields = [];
         }
 
-        if ($selectedTag && Schema::hasTable('conversation_tag')) {
-            $tagConversationIds = DB::table('conversation_tag')
-                ->where('tag_id', $selectedTag)
-                ->pluck('conversation_id')
-                ->toArray();
-
-            $conversationQuery->whereIn('id', $tagConversationIds);
-        }
 
         /*
         * Filter berdasarkan custom field.
@@ -181,9 +178,8 @@ class ReportController extends Controller
             }
         }
 
-        $mailboxConversationIds = $selectedMailboxId
-            ? $conversationQuery->pluck('id')->toArray()
-            : [];
+        $mailboxConversationIds = $selectedMailboxId ? $conversationQuery->pluck('id')->toArray() : [];
+
 
         /*
          * Ambil thread/update operator sesuai mailbox, tanggal, type, dan tag.
@@ -262,9 +258,6 @@ class ReportController extends Controller
                 $displayConversationQuery->whereIn('id', $customConversationIds);
             }
         }
-        if ($selectedTag && Schema::hasTable('conversation_tag')) {
-            $displayConversationQuery->whereIn('id', $tagConversationIds);
-        }
 
         $conversations = $displayConversationQuery
             ->orderBy('updated_at', 'desc')
@@ -319,10 +312,6 @@ class ReportController extends Controller
  * Hitung time spent berdasarkan time_tracking_logs.
  */
         foreach ($timeLogs as $log) {
-            if ((int) $log->seconds <= 0) {
-                continue;
-            }
-
             $convId = (int) $log->conversation_id;
             $userId = (int) $log->user_id;
             $customerId = isset($conversationCustomerMap[$convId]) ? $conversationCustomerMap[$convId] : null;
@@ -376,35 +365,41 @@ class ReportController extends Controller
             $totalUpdates += 1;
         }
         /*
-         * Ambil user yang benar-benar punya update.
+         * Ambil semua user yang di-assign ke mailbox terpilih (termasuk yang belum punya log).
          */
-        $userIds = array_keys($userStats);
+        $mapUserStats = function ($user) use ($userStats) {
+            $stats = isset($userStats[$user->id]) ? $userStats[$user->id] : ['minutes' => 0, 'updates' => 0];
 
-        $users = collect();
+            $user->time_spent_minutes = $stats['minutes'];
+            $user->time_spent_hours = round($stats['minutes'] / 60, 2);
+            $user->update_count = $stats['updates'];
+            if ($stats['updates'] > 0) {
+                $user->avg_hours_per_update = round(($stats['minutes'] / 60) / $stats['updates'], 2);
+            } else {
+                $user->avg_hours_per_update = 0;
+            }
 
-        if (count($userIds)) {
-            $users = User::whereIn('id', $userIds)
-                ->orderBy('first_name', 'asc')
-                ->orderBy('last_name', 'asc')
-                ->get()
-                ->map(function ($user) use ($userStats) {
-                    $stats = isset($userStats[$user->id]) ? $userStats[$user->id] : ['minutes' => 0, 'updates' => 0];
+            $user->time_spent_label = $this->formatTimeSpent($stats['minutes']);
 
-                    $user->time_spent_minutes = $stats['minutes'];
-                    $user->time_spent_hours = round($stats['minutes'] / 60, 2);
-                    $user->update_count = $stats['updates'];
-                    $user->avg_hours_per_update = $stats['updates'] > 0
-                        ? round(($stats['minutes'] / 60) / $stats['updates'], 2)
-                        : 0;
+            $avgMinutes = $stats['updates'] > 0 ? $stats['minutes'] / $stats['updates'] : 0;
+            $user->avg_time_spent_label = $this->formatTimeSpent($avgMinutes);
 
-                    $user->time_spent_label = $this->formatTimeSpent($stats['minutes']);
+            return $user;
+        };
 
-                    $avgMinutes = $stats['updates'] > 0 ? $stats['minutes'] / $stats['updates'] : 0;
-                    $user->avg_time_spent_label = $this->formatTimeSpent($avgMinutes);
+        $userBaseQuery = $selectedMailboxId ? User::whereHas('mailboxes', function ($mq) use ($selectedMailboxId) { $mq->where('mailboxes.id', $selectedMailboxId); }) : User::whereIn('id', count($userStats) ? array_keys($userStats) : [0]);
 
-                    return $user;
-                });
-        }
+
+
+        $users = $userBaseQuery
+            ->orderBy('first_name', 'asc')
+            ->orderBy('last_name', 'asc')
+            ->get()
+            ->map($mapUserStats);
+
+
+
+
 
         /*
          * Tambahkan statistik ke conversation.
@@ -442,8 +437,7 @@ class ReportController extends Controller
             ->toArray();
 
         if (count($customerIds)) {
-            $customers = DB::table('customers')
-                ->whereIn('id', $customerIds)
+            $customers = \App\Customer::whereIn('id', $customerIds)
                 ->orderBy('first_name', 'asc')
                 ->orderBy('last_name', 'asc')
                 ->get()
@@ -460,17 +454,6 @@ class ReportController extends Controller
                     return $customer;
                 });
         }
-        /*
-         * Data tag jika tabel tag tersedia.
-         */
-        $tags = collect();
-
-        if (Schema::hasTable('tags')) {
-            $tags = DB::table('tags')
-                ->orderBy('name', 'asc')
-                ->get();
-        }
-
         /*
          * Siapkan data grafik berdasarkan USER yang menindaklanjuti.
          */
@@ -544,7 +527,7 @@ class ReportController extends Controller
                 : 0,
             'total_updates' => $totalUpdates,
             'total_conversations' => count($conversationIds),
-            'total_users' => count($userIds),
+            'total_users' => $users->count(),
             'total_customers' => count($customerIds),
             'fastest_user' => $fastestUser,
             'slowest_user' => $slowestUser,
@@ -639,8 +622,6 @@ class ReportController extends Controller
             'dateTo'            => $dateTo,
             'range'             => $range,
             'type'              => $type,
-            'selectedTag'       => $selectedTag,
-            'tags'              => $tags,
             'users'             => $users,
             'conversations'     => $conversations,
             'customers'         => $customers,

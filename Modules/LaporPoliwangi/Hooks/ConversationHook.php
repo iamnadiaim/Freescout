@@ -54,6 +54,25 @@ class ConversationHook
          * - satisfaction rating badge ditampilkan di nama usernya
          */
         self::registerSatisfactionRatingBadges();
+
+        /*
+         * Disisipkan di:
+         * @action('conversation.create_form.after_subject', $conversation, $mailbox, $thread)
+         *
+         * Isi:
+         * - Form custom fields saat create conversation
+         */
+        self::registerCreateForm();
+
+        /*
+         * Event Listener saat Conversation baru dibuat oleh User (Agent/Admin)
+         */
+        self::registerCreateEvent();
+
+        /*
+         * Event Listener saat Status berubah (misal: di-Closed)
+         */
+        self::registerStatusChangeEvent();
     }
 
     private static function resolveMailbox($conversation, $mailbox = null)
@@ -214,5 +233,87 @@ class ConversationHook
                 ])->render();
             }
         }, 30, 5);
+    }
+
+    private static function registerCreateForm()
+    {
+        \Eventy::addAction('conversation.create_form.after_subject', function ($conversation, $mailbox = null, $thread = null) {
+            if (!$mailbox) {
+                $mailbox_id = request()->route('mailbox_id') ?? request()->input('mailbox_id');
+                if ($mailbox_id) {
+                    $mailbox = Mailbox::find($mailbox_id);
+                }
+            }
+
+            if (!$mailbox) {
+                return;
+            }
+
+            $custom_fields = CustomField::where('mailbox_id', $mailbox->id)
+                ->orderBy('id', 'asc')
+                ->get();
+
+            if ($custom_fields->count() > 0) {
+                echo view('laporpoliwangi::partials.conversation_custom_fields_create', [
+                    'custom_fields' => $custom_fields,
+                ])->render();
+            }
+        }, 20, 3);
+    }
+
+    private static function registerCreateEvent()
+    {
+        \Illuminate\Support\Facades\Event::listen('App\Events\UserCreatedConversation', function ($event) {
+            $conversation = $event->conversation ?? null;
+            $request = request();
+
+            if (!$conversation || !$request->has('custom_fields')) {
+                return;
+            }
+
+            $fields = $request->input('custom_fields');
+            if (is_array($fields)) {
+                foreach ($fields as $field_id => $value) {
+                    if (is_array($value)) {
+                        $value = implode(',', $value);
+                    }
+                    
+                    if (trim((string)$value) === '') {
+                        continue;
+                    }
+
+                    CustomFieldValue::updateOrCreate(
+                        [
+                            'conversation_id' => $conversation->id,
+                            'custom_field_id' => $field_id,
+                        ],
+                        [
+                            'value' => $value,
+                        ]
+                    );
+                }
+            }
+        });
+    }
+
+    private static function registerStatusChangeEvent()
+    {
+        \Illuminate\Support\Facades\Event::listen('App\Events\ConversationStatusChanged', function ($event) {
+            $conversation = $event->conversation ?? null;
+            if (!$conversation) {
+                return;
+            }
+
+            $userId = auth()->id() ?? $conversation->user_id;
+
+            if ($userId) {
+                \Modules\LaporPoliwangi\Services\TimeTrackingService::logStatusChange(
+                    $conversation,
+                    $userId,
+                    null,
+                    $conversation->status
+                );
+            }
+        });
     }
 }

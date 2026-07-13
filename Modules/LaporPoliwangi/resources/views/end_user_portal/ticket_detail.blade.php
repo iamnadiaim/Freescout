@@ -474,8 +474,9 @@
                         {{-- SATISFACTION RATING --}}
                         @php
                             $showSatisfactionRating = false;
+                            $isAgentReply = $thread->type == \App\Thread::TYPE_MESSAGE;
 
-                            if (isset($ratingSetting) && $ratingSetting && $ratingSetting->enabled && !$isCustomer) {
+                            if (isset($ratingSetting) && $ratingSetting && $ratingSetting->enabled && $isAgentReply) {
                                 $threadBodyForRating = $threadBodyOriginal;
 
                                 /*
@@ -507,7 +508,7 @@
 
                             <div class="satisfaction-rating-box">
                                 <div class="satisfaction-rating-title">
-                                    {!! $ratingSetting->ratings_text ?: 'How would you rate this response?' !!}
+                                    {{ $ratingSetting->ratings_text ?: 'How would you rate this response?' }}
                                 </div>
 
                                 @if ($currentRating)
@@ -611,7 +612,7 @@
     </div>
 
     @include('laporpoliwangi::end_user_portal.partials.footer')
-    <script>
+    <script {!! \Helper::cspNonceAttr() !!}>
         document.addEventListener('DOMContentLoaded', function() {
             var ratingForms = document.querySelectorAll('.satisfaction-rating-form');
 

@@ -8,7 +8,7 @@ use App\Mailbox;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\LaporPoliwangi\Models\CustomField;
 
-class CustomFieldControllerTest extends TestCase
+class CustomFieldTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -259,5 +259,15 @@ class CustomFieldControllerTest extends TestCase
             'nama_field' => 'JSON Field',
             'type_field' => 'text',
         ]);
+    }
+
+    public function test_authorize_settings_fails_for_unauthorized_user()
+    {
+        $this->withExceptionHandling();
+        $this->actingAs($this->user);
+
+        $response = $this->get(route('laporpoliwangi.custom_fields', ['mailbox_id' => $this->mailbox->id]));
+
+        $response->assertStatus(403);
     }
 }

@@ -1689,6 +1689,10 @@ class Helper
      */
     public static function getRunningProcesses($search = '')
     {
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return [];
+        }
+
         if (empty($search)) {
             $search = \Helper::getWorkerIdentifier();
         }
@@ -2414,7 +2418,7 @@ class Helper
             // Commands should avoid using interctive functions or use special flags.
             //'posix_isatty (PHP)'  => function_exists('posix_isatty'),
             'pcntl_signal (console PHP)'    => function_exists('shell_exec') ? (int)\Helper::shellExec('php -r "echo (int)function_exists(\'pcntl_signal\');"') : false,
-            'ps (shell)' => function_exists('shell_exec') ? \Helper::shellExec('ps') : false,
+            'ps (shell)' => (DIRECTORY_SEPARATOR === '\\') ? false : (function_exists('shell_exec') ? \Helper::shellExec('ps 2>/dev/null') : false),
         ];
     }
 

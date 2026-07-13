@@ -329,6 +329,14 @@
 
                                             <div class="nc-channel-detail">
                                                 {{ $channelDetail }}
+                                                
+                                                @if($type === 'telegram' && !empty($config['bot_token']))
+                                                    <div style="margin-top: 8px;">
+                                                        <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#webhookModal-{{ $channel->id }}">
+                                                            <i class="glyphicon glyphicon-cog"></i> Konfigurasi Webhook
+                                                        </button>
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -917,16 +925,65 @@
                             Save Changes
                         </button>
                     </div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
+    
+    @foreach ($notificationChannels as $channel)
+        @php
+            $config = is_array($channel->config) ? $channel->config : [];
+            $type = strtolower($channel->type);
+        @endphp
+        @if($type === 'telegram' && !empty($config['bot_token']))
+            @php
+                $expectedToken = substr(hash('sha256', $config['bot_token']), 0, 32);
+                $webhookUrl = route('notification_channels.webhook', ['type' => 'telegram']);
+            @endphp
+            <div class="modal fade" id="webhookModal-{{ $channel->id }}" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Konfigurasi Telegram</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Webhook URL</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" value="{{ $webhookUrl }}" id="webhook-url-{{ $channel->id }}" readonly>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default nc-copy-btn" type="button" data-nc-target="#webhook-url-{{ $channel->id }}">Copy</button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Secret Token</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" value="{{ $expectedToken }}" id="webhook-secret-{{ $channel->id }}" readonly>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default nc-copy-btn" type="button" data-nc-target="#webhook-secret-{{ $channel->id }}">Copy</button>
+                                    </span>
+                                </div>
+                                <p class="help-block text-danger" style="margin-top: 10px;">Gunakan Secret Token ini saat mengatur webhook Telegram.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endforeach
+
+
 @endsection
 @section('javascripts')
     @parent
 
     @if (file_exists(public_path('js/notification-channels.js')))
-        <script
+        <script {!! \Helper::cspNonceAttr() !!}
             src="{{ asset('js/notification-channels.js') }}?v={{ filemtime(public_path('js/notification-channels.js')) }}">
         </script>
     @endif

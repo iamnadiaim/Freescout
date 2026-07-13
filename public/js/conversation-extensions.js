@@ -185,7 +185,7 @@
         });
     }
 
-    $(document).on('change keyup', '.custom-field-auto-save', function () {
+    $(document).on('change', '.custom-field-auto-save', function () {
         var input = $(this);
         var item = input.closest('.custom-field-view-item');
 
@@ -195,11 +195,7 @@
 
         customFieldSaveTimers[timerKey] = setTimeout(function () {
             saveCustomFieldValue(input);
-        }, 700);
-    });
-
-    $(document).on('blur', '.custom-field-auto-save', function () {
-        saveCustomFieldValue($(this));
+        }, 100);
     });
 
     function initCustomFieldMultiselect() {
@@ -236,6 +232,6 @@
 
     $(document).on('click', '.tt-timelogs-toggle', function (e) {
         e.preventDefault();
-        $('.tt-timelogs-panel').toggleClass('show');
+        $(this).closest('.tt-conv-timer').find('.tt-timelogs-panel').toggleClass('show');
     });
 })();

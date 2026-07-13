@@ -20,10 +20,24 @@ class MenuHook
             }
 
             /*
-             * Report hanya tampil untuk admin.
-             * Kalau nanti operator juga boleh lihat report, bagian ini bisa dilonggarkan.
+             * Report hanya tampil untuk admin atau Petugas yang mengelola minimal 1 mailbox (punya izin 'Edit Mailbox').
              */
-            if (!$user->isAdmin()) {
+            $canViewReport = false;
+            
+            if ($user->isAdmin()) {
+                $canViewReport = true;
+            } else {
+                $managesAnyMailbox = \Illuminate\Support\Facades\DB::table('mailbox_user')
+                    ->where('user_id', $user->id)
+                    ->where('access', 'like', '%"edit"%')
+                    ->exists();
+                
+                if ($managesAnyMailbox) {
+                    $canViewReport = true;
+                }
+            }
+
+            if (!$canViewReport) {
                 return;
             }
 

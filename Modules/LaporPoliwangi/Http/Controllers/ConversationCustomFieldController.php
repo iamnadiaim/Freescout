@@ -32,6 +32,10 @@ class ConversationCustomFieldController extends Controller
         }
 
         if ((int) $customField->mailbox_id !== (int) $conversation->mailbox_id) {
+            \Log::error('422 Error: Mailbox mismatch', [
+                'cf_mailbox' => $customField->mailbox_id,
+                'conv_mailbox' => $conversation->mailbox_id
+            ]);
             return response()->json([
                 'status' => 'error',
                 'msg'    => 'Custom field does not belong to this mailbox.',
@@ -43,6 +47,28 @@ class ConversationCustomFieldController extends Controller
                 'status' => 'error',
                 'msg'    => __('Not enough permissions'),
             ], 403);
+        }
+
+        // Validasi input berdasarkan tipe field
+        $rules = $customField->getValidationRules('cf_'); 
+        $messages = $customField->getValidationMessages('cf_');
+        
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            ['cf_' . $customField->id => $request->get('value')],
+            $rules,
+            $messages
+        );
+
+        if ($validator->fails()) {
+            \Log::error('422 Error: Validation failed', [
+                'errors' => $validator->errors()->toArray(),
+                'rules' => $rules,
+                'data' => [$customField->id => $request->get('value')]
+            ]);
+            return response()->json([
+                'status' => 'error',
+                'msg'    => $validator->errors()->first(),
+            ], 422);
         }
 
         $value = $request->get('value');

@@ -25,7 +25,7 @@
                     </div>
 
                     <div class="satisfaction-report-actions">
-                        <a href="{{ route('mailboxes.satisfaction_ratings.index', $mailbox->id) }}"
+                        <a href="{{ route('laporpoliwangi.satisfaction_ratings.index', $mailbox->id) }}"
                             class="btn btn-default">
                             <i class="glyphicon glyphicon-cog"></i>
                             Settings
@@ -39,15 +39,15 @@
         @php
             $totalRatings = $ratings->total();
 
-            $greatCount = \App\SatisfactionRating::where('mailbox_id', $mailbox->id)
+            $greatCount = \Modules\LaporPoliwangi\Models\SatisfactionRating::where('mailbox_id', $mailbox->id)
                 ->where('rating', 'great')
                 ->count();
 
-            $okayCount = \App\SatisfactionRating::where('mailbox_id', $mailbox->id)
+            $okayCount = \Modules\LaporPoliwangi\Models\SatisfactionRating::where('mailbox_id', $mailbox->id)
                 ->where('rating', 'okay')
                 ->count();
 
-            $notGoodCount = \App\SatisfactionRating::where('mailbox_id', $mailbox->id)
+            $notGoodCount = \Modules\LaporPoliwangi\Models\SatisfactionRating::where('mailbox_id', $mailbox->id)
                 ->where('rating', 'not_good')
                 ->count();
         @endphp

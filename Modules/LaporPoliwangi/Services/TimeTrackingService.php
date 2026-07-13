@@ -198,11 +198,18 @@ class TimeTrackingService
             ? Conversation::statusCodeToName((int) $newStatus)
             : Conversation::statusCodeToName((int) $conversation->status);
 
+        $lastLog = TimeTrackingLog::where('conversation_id', $conversation->id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        $startTime = $lastLog ? $lastLog->created_at : $conversation->created_at;
+        $seconds = now()->diffInSeconds($startTime);
+
         TimeTrackingLog::create([
             'conversation_id' => $conversation->id,
             'mailbox_id'      => $conversation->mailbox_id,
             'user_id'         => $userId,
-            'seconds'         => 0,
+            'seconds'         => $seconds,
             'source'          => 'status_changed',
             'note'            => 'Status changed from ' . $prevStatusName . ' to ' . $newStatusName,
         ]);

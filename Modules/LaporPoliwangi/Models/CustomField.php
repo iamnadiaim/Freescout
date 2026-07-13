@@ -33,4 +33,48 @@ class CustomField extends Model
     {
         return $this->hasMany(CustomFieldValue::class, 'custom_field_id');
     }
+    public function getValidationRules($prefix = 'custom_fields.')
+    {
+        $rules = [];
+        $fieldKey = $prefix . $this->id;
+        $validationRules = [];
+
+        if ($this->required) {
+            $rules[] = 'required';
+        } else {
+            $rules[] = 'nullable';
+        }
+
+        if ($this->type_field == 'number') {
+            $rules[] = 'numeric';
+        } elseif ($this->type_field == 'date') {
+            $rules[] = 'date';
+        } elseif ($this->type_field == 'dropdown') {
+            $values = array_values((array) $this->options);
+            $rules[] = \Illuminate\Validation\Rule::in($values);
+        } elseif ($this->type_field == 'multiselect') {
+            $rules[] = 'array';
+            $values = array_values((array) $this->options);
+            $validationRules[$fieldKey . '.*'] = \Illuminate\Validation\Rule::in($values);
+        }
+
+        $validationRules[$fieldKey] = $rules;
+
+        return $validationRules;
+    }
+
+    public function getValidationMessages($prefix = 'custom_fields.')
+    {
+        $fieldKey = $prefix . $this->id;
+        $name = $this->nama_field;
+        
+        return [
+            $fieldKey . '.required' => "Field '{$name}' wajib diisi.",
+            $fieldKey . '.numeric' => "Field '{$name}' harus berupa angka.",
+            $fieldKey . '.date' => "Field '{$name}' harus berupa tanggal yang valid.",
+            $fieldKey . '.in' => "Pilihan pada field '{$name}' tidak valid.",
+            $fieldKey . '.*.in' => "Pilihan pada field '{$name}' tidak valid.",
+            $fieldKey . '.array' => "Field '{$name}' harus berupa pilihan.",
+        ];
+    }
 }

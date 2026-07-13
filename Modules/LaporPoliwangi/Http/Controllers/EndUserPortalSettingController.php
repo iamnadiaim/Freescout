@@ -10,6 +10,13 @@ use Modules\LaporPoliwangi\Models\EndUserPortalSetting;
 
 class EndUserPortalSettingController extends Controller
 {
+    private function authorizeSettings(Mailbox $mailbox)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->can('updateSettings', $mailbox)) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
     /**
      * Menampilkan halaman setting End-User Portal.
      */
@@ -17,6 +24,7 @@ class EndUserPortalSettingController extends Controller
     {
         // Ambil mailbox berdasarkan ID
         $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         // Ambil setting jika sudah ada
         // Jika belum ada, buat data default sementara
@@ -57,6 +65,7 @@ class EndUserPortalSettingController extends Controller
     public function update(Request $request, $mailbox_id)
     {
         $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         $request->validate([
             'submit_ticket_title' => 'required|string|max:255',

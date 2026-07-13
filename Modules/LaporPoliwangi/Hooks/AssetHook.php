@@ -17,8 +17,6 @@ class AssetHook
         });
 
         \Eventy::addFilter('javascripts', function ($scripts) {
-            $scripts[] = '/js/notification-channels.js';
-            // $scripts[] = '/js/laporpoliwangi-conversation.js';
             $scripts[] = '/js/conversation-extensions.js';
             $scripts[] = '/js/saved-replies-editor.js';
 

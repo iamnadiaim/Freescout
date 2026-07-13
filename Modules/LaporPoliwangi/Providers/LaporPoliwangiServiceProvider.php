@@ -25,10 +25,14 @@ class LaporPoliwangiServiceProvider extends ServiceProvider
 
     private function registerRoutes()
     {
-        $routesPath = __DIR__ . '/../routes/web.php';
+        $webRoutesPath = __DIR__ . '/../routes/web.php';
+        if (file_exists($webRoutesPath)) {
+            $this->loadRoutesFrom($webRoutesPath);
+        }
 
-        if (file_exists($routesPath)) {
-            $this->loadRoutesFrom($routesPath);
+        $apiRoutesPath = __DIR__ . '/../routes/api.php';
+        if (file_exists($apiRoutesPath)) {
+            $this->loadRoutesFrom($apiRoutesPath);
         }
     }
 

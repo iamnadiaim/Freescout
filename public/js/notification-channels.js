@@ -399,6 +399,45 @@
                 });
         }
 
+        function initializeWebhookConfigButtons() {
+            $(document).on('click', '.nc-copy-btn', function(e) {
+                e.preventDefault();
+                var targetId = $(this).attr('data-nc-target');
+                var target = $(targetId);
+                if(target.length) {
+                    var inputEl = target[0];
+                    var temp = inputEl.type;
+                    inputEl.type = 'text';
+                    target.select();
+                    document.execCommand('copy');
+                    inputEl.type = temp;
+                    
+                    var originalText = $(this).text();
+                    $(this).text('Copied!');
+                    var btn = $(this);
+                    setTimeout(function() {
+                        btn.text(originalText);
+                    }, 2000);
+                }
+            });
+
+            $(document).on('click', '.nc-show-btn', function(e) {
+                e.preventDefault();
+                var targetId = $(this).attr('data-nc-target');
+                var target = $(targetId);
+                if(target.length) {
+                    var inputEl = target[0];
+                    if(inputEl.type === 'password') {
+                        inputEl.type = 'text';
+                        $(this).text('Hide');
+                    } else {
+                        inputEl.type = 'password';
+                        $(this).text('Show');
+                    }
+                }
+            });
+        }
+
         function initializePage() {
             moveNotificationModalsToBody();
 
@@ -407,6 +446,7 @@
             initializeEditChannelModal();
             initializeDeleteChannel();
             initializeToggleChannel();
+            initializeWebhookConfigButtons();
 
             showConfiguration(
                 'add',
@@ -432,7 +472,31 @@
             }
         }
 
-        $(document).ready(initializePage);
+        $(document).ready(function() {
+            initializePage();
+
+            // Copy button logic
+            $(document).off('click', '.nc-copy-btn').on('click', '.nc-copy-btn', function(e) {
+                e.preventDefault();
+                var targetId = $(this).attr('data-nc-target');
+                var target = $(targetId);
+                
+                if (target.length) {
+                    target.select();
+                    try {
+                        document.execCommand('copy');
+                        var btn = $(this);
+                        var originalText = btn.text();
+                        btn.text('Copied!');
+                        setTimeout(function() {
+                            btn.text(originalText);
+                        }, 2000);
+                    } catch (err) {
+                        // Fail silently or handle
+                    }
+                }
+            });
+        });
     });
 
 })(window, document);

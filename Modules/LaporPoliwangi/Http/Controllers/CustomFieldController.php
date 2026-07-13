@@ -9,6 +9,13 @@ use Modules\LaporPoliwangi\Models\CustomField;
 
 class CustomFieldController extends Controller
 {
+    private function authorizeSettings(Mailbox $mailbox)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->can('updateSettings', $mailbox)) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
     private $types = [
         'dropdown',
         'text',
@@ -31,6 +38,7 @@ class CustomFieldController extends Controller
     public function index($mailbox_id)
     {
         $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         $fields = CustomField::where('mailbox_id', $mailbox_id)
             ->orderBy('id', 'desc')
@@ -42,6 +50,7 @@ class CustomFieldController extends Controller
     public function store(Request $request, $mailbox_id)
     {
         $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         $this->validateRequest($request);
 
@@ -61,7 +70,8 @@ class CustomFieldController extends Controller
 
     public function update(Request $request, $mailbox_id, $field_id)
     {
-        Mailbox::findOrFail($mailbox_id);
+        $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         $field = CustomField::where('mailbox_id', $mailbox_id)
             ->where('id', $field_id)
@@ -84,7 +94,8 @@ class CustomFieldController extends Controller
 
     public function destroy($mailbox_id, $field_id)
     {
-        Mailbox::findOrFail($mailbox_id);
+        $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         $field = CustomField::where('mailbox_id', $mailbox_id)
             ->where('id', $field_id)
@@ -99,7 +110,8 @@ class CustomFieldController extends Controller
 
     public function getByMailbox($mailbox_id)
     {
-        Mailbox::findOrFail($mailbox_id);
+        $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         $fields = CustomField::where('mailbox_id', $mailbox_id)->get();
 

@@ -184,6 +184,18 @@
                    required>
         </div>
 
+        <div class="form-group">
+            <label style="font-size:14px; font-weight:bold; margin-bottom:8px; display:block;">Keamanan: Silakan ketik ulang teks pada gambar di bawah</label>
+            <div style="margin-bottom: 10px;">
+                {!! captcha_img('flat') !!}
+            </div>
+            <input type="text"
+                   name="captcha"
+                   class="form-control"
+                   placeholder="Masukkan kode captcha"
+                   required>
+        </div>
+
         <button type="submit" class="btn-register">
             Daftar
         </button>

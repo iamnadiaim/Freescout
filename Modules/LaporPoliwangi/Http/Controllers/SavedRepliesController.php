@@ -37,7 +37,7 @@ class SavedRepliesController extends Controller
             abort(403);
         }
 
-        if (!$user->hasPermission(User::PERM_EDIT_SAVED_REPLIES)) {
+        if (!$user->hasPermission(User::PERM_EDIT_SAVED_REPLIES) && !$user->hasManageMailboxPermission($mailbox->id, Mailbox::ACCESS_PERM_EDIT)) {
             abort(403);
         }
     }

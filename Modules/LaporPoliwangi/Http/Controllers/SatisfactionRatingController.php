@@ -13,12 +13,28 @@ use Modules\LaporPoliwangi\Models\SatisfactionRatingSetting;
 
 class SatisfactionRatingController extends Controller
 {
+    private function authorizeSettings(Mailbox $mailbox)
+    {
+        $user = auth()->user();
+        $canAccess = $user->can('updateSettings', $mailbox);
+        
+        if (!$canAccess && defined('\App\Mailbox::ACCESS_PERM_SATISFACTION_RATINGS')) {
+            if ($user->hasManageMailboxPermission($mailbox->id, \App\Mailbox::ACCESS_PERM_SATISFACTION_RATINGS)) {
+                $canAccess = true;
+            }
+        }
+        
+        if (!$canAccess) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
     /**
      * Menampilkan halaman Satisfaction Ratings settings.
      */
     public function index($mailbox_id)
     {
         $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         /*
          * Ambil atau buat setting default untuk mailbox ini.
@@ -39,6 +55,7 @@ class SatisfactionRatingController extends Controller
     public function updateSettings(Request $request, $mailbox_id)
     {
         $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         $request->merge([
             'enabled' => $request->has('enabled'),
@@ -92,6 +109,7 @@ class SatisfactionRatingController extends Controller
     public function updateTranslate(Request $request, $mailbox_id)
     {
         $mailbox = Mailbox::findOrFail($mailbox_id);
+        $this->authorizeSettings($mailbox);
 
         $request->validate(
             [
@@ -378,7 +396,7 @@ class SatisfactionRatingController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('laporpoliwangi.satisfaction_ratings.report', compact(
+        return view('laporpoliwangi::satisfaction_ratings.report', compact(
             'mailbox',
             'ratings'
         ));

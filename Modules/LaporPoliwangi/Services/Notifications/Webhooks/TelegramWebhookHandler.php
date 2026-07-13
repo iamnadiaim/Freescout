@@ -12,6 +12,8 @@ class TelegramWebhookHandler implements NotificationWebhookInterface
 {
     public function handle(Request $request)
     {
+
+
         $update = $request->all();
 
         if (empty($update['callback_query'])) {

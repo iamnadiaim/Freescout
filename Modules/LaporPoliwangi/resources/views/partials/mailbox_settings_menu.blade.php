@@ -5,7 +5,7 @@
 @if ($user)
 
     {{-- Custom Fields --}}
-    @if ($user->isAdmin())
+    @if ($user->isAdmin() || $user->hasManageMailboxPermission($mailbox->id, \App\Mailbox::ACCESS_PERM_EDIT))
         <li class="{{ request()->is('lapor-poliwangi/mailboxes/*/custom-fields*') ? 'active' : '' }}">
             <a href="{{ route('laporpoliwangi.custom_fields', $mailbox->id) }}">
                 <i class="glyphicon glyphicon-th-list"></i>
@@ -15,7 +15,7 @@
     @endif
 
     {{-- Saved Replies --}}
-    @if ($user->isAdmin())
+    @if ($user->isAdmin() || $user->hasManageMailboxPermission($mailbox->id, \App\Mailbox::ACCESS_PERM_EDIT) || $user->hasPermission(\App\User::PERM_EDIT_SAVED_REPLIES))
         <li class="{{ request()->is('lapor-poliwangi/mailboxes/*/saved-replies*') ? 'active' : '' }}">
             <a href="{{ route('laporpoliwangi.saved_replies', $mailbox->id) }}">
                 <i class="glyphicon glyphicon-save"></i>
@@ -26,6 +26,7 @@
 
     {{-- Satisfaction Ratings --}}
     @if ($user->isAdmin() ||
+            $user->hasManageMailboxPermission($mailbox->id, \App\Mailbox::ACCESS_PERM_EDIT) ||
             (defined('\App\Mailbox::ACCESS_PERM_SATISFACTION_RATINGS') &&
                 $user->hasManageMailboxPermission($mailbox->id, \App\Mailbox::ACCESS_PERM_SATISFACTION_RATINGS)))
         <li class="{{
@@ -41,7 +42,7 @@
     @endif
 
     {{-- End-User Portal --}}
-    @if ($user->isAdmin())
+    @if ($user->isAdmin() || $user->hasManageMailboxPermission($mailbox->id, \App\Mailbox::ACCESS_PERM_EDIT))
         <li class="{{ request()->is('lapor-poliwangi/mailboxes/*/end-user-portal*') ? 'active' : '' }}">
             <a href="{{ Route::has('laporpoliwangi.end_user_portal.setting')
                 ? route('laporpoliwangi.end_user_portal.setting', $mailbox->id)
