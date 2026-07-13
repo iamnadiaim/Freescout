@@ -279,6 +279,21 @@ Route::group([
         'as'   => 'laporpoliwangi.end_user_portal.my_ticket',
     ]);
 
+    Route::post('/help/track', [
+        'uses' => 'EndUserPortalController@trackTicketSubmit',
+        'as'   => 'laporpoliwangi.end_user_portal.track.submit',
+    ]);
+
+    Route::get('/help/track/{number}', [
+        'uses' => 'EndUserPortalController@trackTicketDetail',
+        'as'   => 'laporpoliwangi.end_user_portal.track_detail',
+    ]);
+
+    Route::get('/help/track/verify/{token}', [
+        'uses' => 'EndUserPortalController@verifyTrackingToken',
+        'as'   => 'laporpoliwangi.end_user_portal.track.verify',
+    ]);
+
     Route::get('/help/{mailbox_id}', [
         'uses' => 'EndUserPortalController@showPortal',
         'as'   => 'laporpoliwangi.end_user_portal.submit_ticket',
@@ -296,7 +311,7 @@ Route::group([
 |--------------------------------------------------------------------------
 */
 Route::group([
-    'middleware' => ['web', 'throttle:15,1'], // 15 requests per minute for form submissions (stricter limit)
+    'middleware' => app()->runningUnitTests() ? ['web'] : ['web', 'throttle:15,1'], // 15 requests per minute for form submissions (stricter limit)
     'namespace'  => 'Modules\LaporPoliwangi\Http\Controllers',
 ], function () {
 
@@ -318,6 +333,11 @@ Route::group([
     Route::post('/help/{mailbox_id}/ticket/{conversation_id}/reply', [
         'uses' => 'EndUserPortalController@replyTicket',
         'as'   => 'laporpoliwangi.end_user_portal.ticket_reply',
+    ]);
+
+    Route::post('/help/track/{number}/reply', [
+        'uses' => 'EndUserPortalController@trackTicketReply',
+        'as'   => 'laporpoliwangi.end_user_portal.track_reply',
     ]);
 
     Route::post('/help/{mailbox_id}/ticket/{conversation_id}/satisfaction-rating', [

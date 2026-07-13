@@ -116,17 +116,13 @@
 
 <style>
 .tt-conv-timer {
-    background: #fdfdfd;
-    border: 1px solid #e1e8ed;
-    border-radius: 4px;
-    padding: 12px 15px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-family: inherit;
 }
 .tt-timer-main-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     flex-wrap: wrap;
     gap: 10px;
 }
@@ -170,9 +166,7 @@
     background: #f5f5f5;
 }
 .tt-timelogs-panel {
-    margin-top: 15px;
-    border-top: 1px solid #e1e8ed;
-    padding-top: 15px;
+    margin-top: 10px;
     display: none;
 }
 .tt-timelogs-panel.show {
@@ -204,27 +198,3 @@
     color: #4caf50;
 }
 </style>
-
-<script>
-    $(document).ready(function() {
-        var isClosed = {{ $conversation->status == \App\Conversation::STATUS_CLOSED ? 'true' : 'false' }};
-        var totalSeconds = {{ (int) $totalTrackedSeconds }};
-        var totalValueEl = $('.tt-conv-timer[data-conversation-id="{{ $conversation->id }}"] .tt-total-value');
-
-        if (!isClosed) {
-            setInterval(function() {
-                totalSeconds++;
-                var h = Math.floor(totalSeconds / 3600);
-                var m = Math.floor((totalSeconds % 3600) / 60);
-                var s = totalSeconds % 60;
-
-                var display = 
-                    (h < 10 ? "0" + h : h) + ":" + 
-                    (m < 10 ? "0" + m : m) + ":" + 
-                    (s < 10 ? "0" + s : s);
-
-                totalValueEl.text(display);
-            }, 1000);
-        }
-    });
-</script>
