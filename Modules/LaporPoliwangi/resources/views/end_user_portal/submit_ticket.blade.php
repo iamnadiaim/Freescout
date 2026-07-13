@@ -1043,7 +1043,7 @@
                             <div class="form-group full" id="subjectFieldWrap" style="display:none;">
                                 <label class="form-label">Subject</label>
                                 <input type="text" id="subjectInput" class="form-control"
-                                    value="{{ old('subject') ?? '' }}" placeholder="Subject">
+                                    value="{{ old('') ?? '' }}" placeholder="Subject">
                             </div>
 
                             {{-- CUSTOM FIELD --}}
@@ -1054,7 +1054,7 @@
                             {{-- PESAN --}}
                             <div class="form-group full">
                                 <label class="form-label">Pesan</label>
-                                <textarea name="message" class="form-control" placeholder="Tulis pesan atau laporan" required>{{ old('message') ?? '' }}</textarea>
+                                <textarea name="message" class="form-control" placeholder="Tulis pesan atau laporan" required>{{ old('') ?? '' }}</textarea>
                             </div>
 
                             {{-- ATTACHMENT --}}
@@ -1084,20 +1084,6 @@
                             <input type="checkbox" name="consent" value="1" id="consentInput">
                             <span>Saya menyetujui pengiriman laporan ini.</span>
                         </label>
-
-                        @if(empty($loggedEmail))
-                        <div class="form-group full" style="margin-top: 15px;">
-                            <label class="form-label">Keamanan: Silakan ketik ulang teks pada gambar di bawah</label>
-                            <div style="margin-bottom: 10px;">
-                                {!! captcha_img('flat') !!}
-                            </div>
-                            <input type="text"
-                                   name="captcha"
-                                   class="form-control"
-                                   placeholder="Masukkan kode captcha"
-                                   required>
-                        </div>
-                        @endif
 
                         <button type="submit" class="btn-send" {{ !$mailboxes->count() ? 'disabled' : '' }}>
                             Kirim Laporan
@@ -1233,7 +1219,7 @@
         @endforeach
     </div>
 
-    <script {!! \Helper::cspNonceAttr() !!}>
+    <script>
         var mailboxSelect = document.getElementById('mailboxSelect');
         var form = document.getElementById('landingTicketForm');
 
