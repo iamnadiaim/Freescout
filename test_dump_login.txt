@@ -1,0 +1,47 @@
+Location was: http://127.0.0.1:8000
+Array
+(
+    [_token] => ueJPO195Z1UMI0AAmPCGSgepxo3aWe4pMyCLICVZ
+    [_old_input] => Array
+        (
+            [email] => enduser@example.com
+            [redirect] => /help
+        )
+
+    [_flash] => Array
+        (
+            [new] => Array
+                (
+                )
+
+            [old] => Array
+                (
+                    [0] => _old_input
+                    [1] => errors
+                )
+
+        )
+
+    [errors] => Illuminate\Support\ViewErrorBag Object
+        (
+            [bags:protected] => Array
+                (
+                    [default] => Illuminate\Support\MessageBag Object
+                        (
+                            [messages:protected] => Array
+                                (
+                                    [email] => Array
+                                        (
+                                            [0] => Silakan verifikasi email Anda terlebih dahulu melalui link yang telah dikirim ke email.
+                                        )
+
+                                )
+
+                            [format:protected] => :message
+                        )
+
+                )
+
+        )
+
+)
