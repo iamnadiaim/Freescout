@@ -43,14 +43,8 @@ class LaporPoliwangiServiceProvider extends ServiceProvider
 
         $viewPath = is_dir($viewPathUpper) ? $viewPathUpper : $viewPathLower;
 
-        if (!is_dir($viewPath)) {
-            return;
-        }
-
-        $this->loadViewsFrom($viewPath, 'laporpoliwangi');
-
-        if ($this->app->bound('view')) {
-            $this->app['view']->addLocation($viewPath);
+        if (is_dir($viewPath)) {
+            $this->loadViewsFrom($viewPath, 'laporpoliwangi');
         }
     }
 
