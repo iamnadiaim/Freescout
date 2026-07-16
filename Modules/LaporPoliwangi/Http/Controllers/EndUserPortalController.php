@@ -980,24 +980,16 @@ class EndUserPortalController extends Controller
 
         $verificationUrl = route('laporpoliwangi.end_user_portal.verify', ['token' => $token, 'redirect' => $redirect]);
 
-        $autoVerified = false;
         try {
+            \App\Misc\Mail::setSystemMailDriver();
             Mail::send('laporpoliwangi::emails.verification', ['url' => $verificationUrl], function ($message) use ($emailValue) {
                 $message->to($emailValue)
                         ->subject('Verifikasi Akun Portal Lapor Poliwangi');
             });
+            $msg = 'Akun berhasil dibuat. Silakan cek kotak masuk email Anda (' . $emailValue . ') untuk melakukan verifikasi akun sebelum login.';
         } catch (\Exception $e) {
             Log::error('Failed to send verification email: ' . $e->getMessage());
-            // Bypass verifikasi jika email gagal dikirim (contoh: localhost tanpa SMTP)
-            $account->email_verified_at = now();
-            $account->save();
-            $autoVerified = true;
-        }
-
-        if ($autoVerified) {
-            $msg = 'Akun berhasil dibuat. (Otomatis terverifikasi karena sistem belum dikonfigurasi untuk mengirim email). Silakan langsung login.';
-        } else {
-            $msg = 'Akun berhasil dibuat. Silakan cek kotak masuk email Anda (' . $emailValue . ') untuk melakukan verifikasi akun sebelum login.';
+            $msg = 'Akun berhasil dibuat, namun sistem gagal mengirim email verifikasi saat ini. Silakan coba login nanti untuk mengirim ulang link verifikasi.';
         }
 
         return redirect()
@@ -1116,11 +1108,33 @@ class EndUserPortalController extends Controller
         }
 
         if (is_null($account->email_verified_at)) {
+            $token = $account->verification_token;
+            if (!$token) {
+                $token = \Illuminate\Support\Str::random(60);
+                $account->verification_token = $token;
+                $account->save();
+            }
+
+            $verificationUrl = route('laporpoliwangi.end_user_portal.verify', ['token' => $token, 'redirect' => $redirect]);
+
+            try {
+                \App\Misc\Mail::setSystemMailDriver();
+                \Illuminate\Support\Facades\Mail::send('laporpoliwangi::emails.verification', ['url' => $verificationUrl], function ($message) use ($emailValue) {
+                    $message->to($emailValue)
+                            ->subject('Verifikasi Akun Portal Lapor Poliwangi');
+                });
+                
+                $msg = 'Akun Anda belum diverifikasi. Kami telah mengirim ulang link verifikasi ke email Anda. Silakan cek kotak masuk atau folder spam.';
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to resend verification email: ' . $e->getMessage());
+                $msg = 'Sistem gagal mengirim ulang link verifikasi. Pastikan konfigurasi email pada pengaturan sistem sudah benar atau coba lagi nanti.';
+            }
+
             return redirect()
                 ->back()
                 ->withInput($request->only('email', 'redirect'))
                 ->withErrors([
-                    'email' => 'Silakan verifikasi email Anda terlebih dahulu melalui link yang telah dikirim ke email.',
+                    'email' => $msg,
                 ]);
         }
 
@@ -1509,6 +1523,7 @@ class EndUserPortalController extends Controller
         $url = route('laporpoliwangi.end_user_portal.track.verify', ['token' => $token]);
         
         try {
+            \App\Misc\Mail::setSystemMailDriver();
             Mail::send('laporpoliwangi::emails.tracking_link', ['url' => $url, 'conversation' => $conversation], function ($message) use ($request, $conversation) {
                 $message->to($request->email)
                         ->subject('Tautan Akses Pelacakan Laporan - #' . $conversation->number);
