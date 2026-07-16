@@ -38,7 +38,10 @@ class LaporPoliwangiServiceProvider extends ServiceProvider
 
     private function registerViews()
     {
-        $viewPath = __DIR__ . '/../resources/views';
+        $viewPathUpper = __DIR__ . '/../Resources/views';
+        $viewPathLower = __DIR__ . '/../resources/views';
+
+        $viewPath = is_dir($viewPathUpper) ? $viewPathUpper : $viewPathLower;
 
         if (!is_dir($viewPath)) {
             return;
