@@ -51,6 +51,13 @@ class LaporPoliwangiServiceProvider extends ServiceProvider
 
         if (count($paths) > 0) {
             $this->loadViewsFrom($paths, 'laporpoliwangi');
+            
+            if ($this->app->bound('view')) {
+                foreach ($paths as $path) {
+                    $this->app['view']->addLocation($path);
+                }
+            }
+
             \Illuminate\Support\Facades\Log::info('LaporPoliwangi views registered successfully', ['paths' => $paths]);
         } else {
             \Illuminate\Support\Facades\Log::error('LaporPoliwangi views directory not found!', [
