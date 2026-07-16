@@ -675,9 +675,283 @@
                     </h2>
 
                     @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
+                        <div id="successModalOverlay" class="success-modal-overlay">
+                            <div class="success-modal-box">
+                                <div class="success-icon">
+                                    <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <h3 class="success-title">Laporan Terkirim!</h3>
+                                <p class="success-desc">Terima kasih, laporan Anda telah kami terima.</p>
+                                
+                                @if (session('secret_tracking_code'))
+                                    <div class="ticket-number-box" style="background: #fff5eb; border: 1px solid #ffcc80;">
+                                        <span class="ticket-label" style="color: #e65100; font-weight: bold;">SIMPAN KODE PELACAK RAHASIA INI</span>
+                                        <div class="ticket-number-flex">
+                                            <span class="ticket-number" id="ticketNumberText" style="color: #e65100;">{{ session('secret_tracking_code') }}</span>
+                                            <button class="btn-copy-ticket" onclick="copyTicketNumber()" title="Salin Kode Pelacak">
+                                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="ticket-note" style="color: #d84315; font-weight: bold;">Anda sedang melapor secara Anonim. Anda WAJIB menyimpan Kode Pelacak di atas untuk mengecek status dan balasan dari Admin.</p>
+                                @elseif (session('ticket_number'))
+                                    <div class="ticket-number-box">
+                                        <span class="ticket-label">Nomor Tiket Anda</span>
+                                        <div class="ticket-number-flex">
+                                            <span class="ticket-number" id="ticketNumberText">#{{ session('ticket_number') }}</span>
+                                            <button class="btn-copy-ticket" onclick="copyTicketNumber()" title="Salin Nomor Tiket">
+                                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="ticket-note">Harap simpan nomor tiket ini untuk melacak status laporan Anda di menu <strong>Cek Status</strong>.</p>
+                                @endif
+                                
+                                <button type="button" class="btn-close-modal" onclick="closeSuccessModal()">Tutup</button>
+                            </div>
                         </div>
+                        
+                        <style>
+                            .success-modal-overlay {
+                                position: fixed;
+                                top: 0; left: 0; right: 0; bottom: 0;
+                                background: rgba(15, 23, 42, 0.6);
+                                backdrop-filter: blur(4px);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                z-index: 999999;
+                                animation: fadeIn 0.3s ease-out forwards;
+                            }
+                            
+                            .success-modal-box {
+                                background: #ffffff;
+                                border-radius: 24px;
+                                padding: 40px 32px;
+                                max-width: 420px;
+                                width: 90%;
+                                text-align: center;
+                                box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
+                                transform: scale(0.9);
+                                opacity: 0;
+                                animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s forwards;
+                            }
+                            
+                            .success-icon {
+                                width: 80px;
+                                height: 80px;
+                                background: linear-gradient(135deg, #34d399, #059669);
+                                color: #ffffff;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 24px;
+                                box-shadow: 
+                                    inset -4px -4px 8px rgba(0,0,0,0.15),
+                                    inset 4px 4px 8px rgba(255,255,255,0.4),
+                                    0 10px 20px rgba(16, 185, 129, 0.3);
+                                transform-style: preserve-3d;
+                            }
+                            
+                            .success-icon svg {
+                                width: 44px;
+                                height: 44px;
+                            }
+                            
+                            .checkmark {
+                                transform: scale(0) translateZ(20px);
+                                transform-origin: center;
+                                animation: bubblePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s forwards;
+                                filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+                            }
+                            
+                            @keyframes bubblePop {
+                                0% { transform: scale(0) translateZ(0); opacity: 0; }
+                                60% { transform: scale(1.15) translateZ(25px); opacity: 1; }
+                                100% { transform: scale(1) translateZ(20px); opacity: 1; }
+                            }
+                            
+                            .success-title {
+                                font-size: 24px;
+                                font-weight: 800;
+                                color: #1e293b;
+                                margin: 0 0 8px;
+                            }
+                            
+                            .success-desc {
+                                font-size: 15px;
+                                color: #64748b;
+                                margin: 0 0 24px;
+                            }
+                            
+                            .ticket-number-box {
+                                background: #f8fafc;
+                                border: 2px dashed #cbd5e1;
+                                border-radius: 12px;
+                                padding: 16px;
+                                margin-bottom: 16px;
+                            }
+                            
+                            .ticket-label {
+                                display: block;
+                                font-size: 13px;
+                                font-weight: 600;
+                                color: #64748b;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
+                                margin-bottom: 8px;
+                            }
+
+                            .ticket-number-flex {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 12px;
+                            }
+                            
+                            .ticket-number {
+                                font-size: 32px;
+                                font-weight: 900;
+                                color: #0a84df;
+                                letter-spacing: 1px;
+                            }
+
+                            .btn-copy-ticket {
+                                background: #e0f2fe;
+                                color: #0284c7;
+                                border: none;
+                                border-radius: 8px;
+                                width: 40px;
+                                height: 40px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                            }
+
+                            .btn-copy-ticket:hover {
+                                background: #bae6fd;
+                                color: #0369a1;
+                            }
+                            
+                            .ticket-note {
+                                font-size: 13px;
+                                color: #64748b;
+                                line-height: 1.5;
+                                margin: 0 0 28px;
+                            }
+                            
+                            .btn-close-modal {
+                                background: #0a84df;
+                                color: #ffffff;
+                                border: none;
+                                padding: 14px 32px;
+                                font-size: 16px;
+                                font-weight: 700;
+                                border-radius: 12px;
+                                cursor: pointer;
+                                width: 100%;
+                                transition: background 0.2s;
+                            }
+                            
+                            .btn-close-modal:hover {
+                                background: #0875cf;
+                            }
+                            
+                            @keyframes fadeIn {
+                                from { opacity: 0; }
+                                to { opacity: 1; }
+                            }
+                            
+                            @keyframes popUp {
+                                from { transform: scale(0.9); opacity: 0; }
+                                to { transform: scale(1); opacity: 1; }
+                            }
+                        </style>
+                        
+                        <script {!! \Helper::cspNonceAttr() !!}>
+                            function closeSuccessModal() {
+                                const overlay = document.getElementById('successModalOverlay');
+                                if(overlay) {
+                                    overlay.style.display = 'none';
+                                }
+                            }
+
+                            function copyTicketNumber() {
+                                const textElement = document.getElementById('ticketNumberText');
+                                if (!textElement) return;
+                                
+                                let text = textElement.innerText.trim();
+                                if (text.startsWith('#')) {
+                                    text = text.substring(1);
+                                }
+                                
+                                navigator.clipboard.writeText(text).then(() => {
+                                    alert('Berhasil disalin!');
+                                }).catch(err => {
+                                    console.error('Gagal menyalin teks: ', err);
+                                });
+                            }
+
+                            // Save to local storage for anonymous tracking history
+                            document.addEventListener('DOMContentLoaded', function() {
+                                @if (session('secret_tracking_code'))
+                                    try {
+                                        const newTicket = {
+                                            number: '{{ session("secret_tracking_code") }}',
+                                            subject: '{!! addslashes(session("ticket_subject", "Laporan Anonim")) !!}',
+                                            date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                                        };
+                                        
+                                        let history = JSON.parse(localStorage.getItem('anonymous_tickets_history')) || [];
+                                        
+                                        // Remove if exists to prevent duplicates, then add to front
+                                        history = history.filter(t => t.number !== newTicket.number);
+                                        history.unshift(newTicket);
+                                        
+                                        // Keep only last 10 tickets
+                                        if (history.length > 10) {
+                                            history = history.slice(0, 10);
+                                        }
+                                        
+                                        localStorage.setItem('anonymous_tickets_history', JSON.stringify(history));
+                                    } catch (e) {
+                                        console.error('Failed to save ticket to local storage', e);
+                                    }
+                                @elseif (session('ticket_number'))
+                                    try {
+                                        const newTicket = {
+                                            number: '{{ session("ticket_number") }}',
+                                            subject: '{!! addslashes(session("ticket_subject", "Laporan Baru")) !!}',
+                                            date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                                        };
+                                        
+                                        let history = JSON.parse(localStorage.getItem('anonymous_tickets_history')) || [];
+                                        
+                                        history = history.filter(t => t.number !== newTicket.number);
+                                        history.unshift(newTicket);
+                                        
+                                        if (history.length > 10) {
+                                            history = history.slice(0, 10);
+                                        }
+                                        
+                                        localStorage.setItem('anonymous_tickets_history', JSON.stringify(history));
+                                    } catch (e) {
+                                        console.error('Failed to save ticket to local storage', e);
+                                    }
+                                @endif
+                            });
+                        </script>
                     @endif
 
                     @if ($errors->any())
@@ -769,7 +1043,7 @@
                             <div class="form-group full" id="subjectFieldWrap" style="display:none;">
                                 <label class="form-label">Subject</label>
                                 <input type="text" id="subjectInput" class="form-control"
-                                    value="{{ old('') ?? '' }}" placeholder="Subject">
+                                    value="{{ old('subject') ?? '' }}" placeholder="Subject">
                             </div>
 
                             {{-- CUSTOM FIELD --}}
@@ -780,7 +1054,7 @@
                             {{-- PESAN --}}
                             <div class="form-group full">
                                 <label class="form-label">Pesan</label>
-                                <textarea name="message" class="form-control" placeholder="Tulis pesan atau laporan" required>{{ old('') ?? '' }}</textarea>
+                                <textarea name="message" class="form-control" placeholder="Tulis pesan atau laporan" required>{{ old('message') ?? '' }}</textarea>
                             </div>
 
                             {{-- ATTACHMENT --}}
@@ -810,6 +1084,20 @@
                             <input type="checkbox" name="consent" value="1" id="consentInput">
                             <span>Saya menyetujui pengiriman laporan ini.</span>
                         </label>
+
+                        @if(empty($loggedEmail))
+                        <div class="form-group full" style="margin-top: 15px;">
+                            <label class="form-label">Keamanan: Silakan ketik ulang teks pada gambar di bawah</label>
+                            <div style="margin-bottom: 10px;">
+                                {!! captcha_img('flat') !!}
+                            </div>
+                            <input type="text"
+                                   name="captcha"
+                                   class="form-control"
+                                   placeholder="Masukkan kode captcha"
+                                   required>
+                        </div>
+                        @endif
 
                         <button type="submit" class="btn-send" {{ !$mailboxes->count() ? 'disabled' : '' }}>
                             Kirim Laporan
@@ -945,7 +1233,7 @@
         @endforeach
     </div>
 
-    <script>
+    <script {!! \Helper::cspNonceAttr() !!}>
         var mailboxSelect = document.getElementById('mailboxSelect');
         var form = document.getElementById('landingTicketForm');
 
