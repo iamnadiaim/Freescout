@@ -1127,8 +1127,11 @@ class EndUserPortalController extends Controller
                 $msg = 'Akun Anda belum diverifikasi. Kami telah mengirim ulang link verifikasi ke email Anda. Silakan cek kotak masuk atau folder spam.';
             } catch (\Exception $e) {
                 \Illuminate\Support\Facades\Log::error('Failed to resend verification email: ' . $e->getMessage());
-                // Tampilkan pesan error asli di layar untuk sementara agar kita tahu masalah aslinya
-                dd("ERROR ASLI DARI SISTEM: " . $e->getMessage());
+                // Tampilkan pesan error asli beserta stack trace-nya
+                dd([
+                    'message' => "ERROR ASLI DARI SISTEM: " . $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
                 $msg = 'Sistem gagal mengirim ulang link verifikasi. Pastikan konfigurasi email pada pengaturan sistem sudah benar atau coba lagi nanti.';
             }
 
