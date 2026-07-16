@@ -38,13 +38,25 @@ class LaporPoliwangiServiceProvider extends ServiceProvider
 
     private function registerViews()
     {
-        $viewPathUpper = __DIR__ . '/../Resources/views';
-        $viewPathLower = __DIR__ . '/../resources/views';
+        $viewPathUpper = realpath(__DIR__ . '/../Resources/views');
+        $viewPathLower = realpath(__DIR__ . '/../resources/views');
 
-        $viewPath = is_dir($viewPathUpper) ? $viewPathUpper : $viewPathLower;
+        $paths = [];
+        if ($viewPathUpper && is_dir($viewPathUpper)) {
+            $paths[] = $viewPathUpper;
+        }
+        if ($viewPathLower && is_dir($viewPathLower) && !in_array($viewPathLower, $paths)) {
+            $paths[] = $viewPathLower;
+        }
 
-        if (is_dir($viewPath)) {
-            $this->loadViewsFrom($viewPath, 'laporpoliwangi');
+        if (count($paths) > 0) {
+            $this->loadViewsFrom($paths, 'laporpoliwangi');
+            \Illuminate\Support\Facades\Log::info('LaporPoliwangi views registered successfully', ['paths' => $paths]);
+        } else {
+            \Illuminate\Support\Facades\Log::error('LaporPoliwangi views directory not found!', [
+                'checked_upper' => __DIR__ . '/../Resources/views',
+                'checked_lower' => __DIR__ . '/../resources/views',
+            ]);
         }
     }
 
