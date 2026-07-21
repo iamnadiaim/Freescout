@@ -21,14 +21,23 @@ class PoliwangiPortalServiceProvider extends ServiceProvider
 
     private function registerRoutes()
     {
-        $webRoutesPath = __DIR__ . '/../routes/web.php';
-        if (file_exists($webRoutesPath)) {
-            $this->loadRoutesFrom($webRoutesPath);
+        // Mendukung server lokal (Windows) dan production (Linux/Case-Sensitive)
+        $webRoutesPathUpper = __DIR__ . '/../Routes/web.php';
+        $webRoutesPathLower = __DIR__ . '/../routes/web.php';
+        
+        if (file_exists($webRoutesPathUpper)) {
+            $this->loadRoutesFrom($webRoutesPathUpper);
+        } elseif (file_exists($webRoutesPathLower)) {
+            $this->loadRoutesFrom($webRoutesPathLower);
         }
 
-        $apiRoutesPath = __DIR__ . '/../routes/api.php';
-        if (file_exists($apiRoutesPath)) {
-            $this->loadRoutesFrom($apiRoutesPath);
+        $apiRoutesPathUpper = __DIR__ . '/../Routes/api.php';
+        $apiRoutesPathLower = __DIR__ . '/../routes/api.php';
+        
+        if (file_exists($apiRoutesPathUpper)) {
+            $this->loadRoutesFrom($apiRoutesPathUpper);
+        } elseif (file_exists($apiRoutesPathLower)) {
+            $this->loadRoutesFrom($apiRoutesPathLower);
         }
     }
 
