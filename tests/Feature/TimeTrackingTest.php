@@ -29,6 +29,8 @@ class TimeTrackingTest extends TestCase
             $this->admin->id,
             $this->user1->id
         ]);
+
+        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
     }
 
     private function createConversation($overrides = [])
@@ -46,7 +48,7 @@ class TimeTrackingTest extends TestCase
 
         $conversation = $this->createConversation();
         
-        $this->postJson(route('laporpoliwangi.time_tracking.status'), [
+        $this->postJson(route('PoliwangiPortal.time_tracking.status'), [
             'conversation_id' => $conversation->id
         ]);
     }
@@ -57,7 +59,7 @@ class TimeTrackingTest extends TestCase
 
         $this->actingAs($this->user1);
 
-        $this->postJson(route('laporpoliwangi.time_tracking.status'), []);
+        $this->postJson(route('PoliwangiPortal.time_tracking.status'), []);
     }
 
     public function test_status_conversation_not_found()
@@ -66,7 +68,7 @@ class TimeTrackingTest extends TestCase
 
         $this->actingAs($this->user1);
 
-        $this->postJson(route('laporpoliwangi.time_tracking.status'), [
+        $this->postJson(route('PoliwangiPortal.time_tracking.status'), [
             'conversation_id' => 999999
         ]);
     }
@@ -79,7 +81,7 @@ class TimeTrackingTest extends TestCase
         
         $conversation = $this->createConversation(['user_id' => $this->user1->id]);
         
-        $this->postJson(route('laporpoliwangi.time_tracking.status'), [
+        $this->postJson(route('PoliwangiPortal.time_tracking.status'), [
             'conversation_id' => $conversation->id
         ]);
     }
@@ -90,7 +92,7 @@ class TimeTrackingTest extends TestCase
         
         $conversation = $this->createConversation(['user_id' => null]);
 
-        $response = $this->postJson(route('laporpoliwangi.time_tracking.status'), [
+        $response = $this->postJson(route('PoliwangiPortal.time_tracking.status'), [
             'conversation_id' => $conversation->id
         ]);
 
@@ -107,7 +109,7 @@ class TimeTrackingTest extends TestCase
         
         $conversation = $this->createConversation(['user_id' => $this->user1->id]);
 
-        $response = $this->postJson(route('laporpoliwangi.time_tracking.status'), [
+        $response = $this->postJson(route('PoliwangiPortal.time_tracking.status'), [
             'conversation_id' => $conversation->id
         ]);
 
@@ -124,7 +126,7 @@ class TimeTrackingTest extends TestCase
         
         $conversation = $this->createConversation(['user_id' => $this->user1->id]);
 
-        $response = $this->postJson(route('laporpoliwangi.time_tracking.status'), [
+        $response = $this->postJson(route('PoliwangiPortal.time_tracking.status'), [
             'conversation_id' => $conversation->id
         ]);
 
@@ -136,7 +138,7 @@ class TimeTrackingTest extends TestCase
 
     public function test_can_track_conversation_not_logged_in()
     {
-        $controller = new \Modules\LaporPoliwangi\Http\Controllers\TimeTrackingController();
+        $controller = new \Modules\PoliwangiTimeTracking\Http\Controllers\TimeTrackingController();
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('canTrackConversation');
         $method->setAccessible(true);

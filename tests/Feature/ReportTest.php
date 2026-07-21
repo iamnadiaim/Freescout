@@ -56,9 +56,9 @@ class ReportTest extends TestCase
 
     public function test_time_tracking_report_loads_successfully()
     {
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking'));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking'));
         $response->assertStatus(200);
-        $response->assertViewIs('laporpoliwangi::reports.time_tracking');
+        $response->assertViewIs('poliwangireport::reports.time_tracking');
     }
 
     public function test_time_tracking_report_with_no_mailboxes()
@@ -66,7 +66,7 @@ class ReportTest extends TestCase
         $userNoMailbox = factory(User::class)->create([
             'role' => User::ROLE_ADMIN,
         ]);
-        $response = $this->actingAs($userNoMailbox)->get(route('laporpoliwangi.reports.time_tracking'));
+        $response = $this->actingAs($userNoMailbox)->get(route('PoliwangiPortal.reports.time_tracking'));
         $response->assertStatus(200);
     }
 
@@ -75,13 +75,13 @@ class ReportTest extends TestCase
         $this->withExceptionHandling();
         $this->actingAs($this->user);
 
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
         $response->assertStatus(403);
     }
 
     public function test_time_tracking_report_with_mailbox_mismatch_falls_back()
     {
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', [
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', [
             'mailbox' => 99999
         ]));
 
@@ -105,7 +105,7 @@ class ReportTest extends TestCase
         ];
 
         foreach ($ranges as $range) {
-            $response = $this->get(route('laporpoliwangi.reports.time_tracking', [
+            $response = $this->get(route('PoliwangiPortal.reports.time_tracking', [
                 'mailbox' => $this->mailbox->id,
                 'range' => $range,
                 'date_from' => '2026-01-01',
@@ -120,29 +120,29 @@ class ReportTest extends TestCase
         // 1. Off mode
         \App\Option::$cache = [];
         \App\Option::set('time_tracking_mode', 'off');
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
         $response->assertStatus(200);
 
         // 2. Reply mode
         \App\Option::$cache = [];
         \App\Option::set('time_tracking_mode', 'reply');
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
         $response->assertStatus(200);
 
         // 3. Note mode
         \App\Option::$cache = [];
         \App\Option::set('time_tracking_mode', 'note');
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
         $response->assertStatus(200);
 
         // 4. Manual types override
         \App\Option::$cache = [];
         \App\Option::set('time_tracking_mode', 'assigned');
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id, 'type' => 'reply']));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id, 'type' => 'reply']));
         $response->assertStatus(200);
 
         \App\Option::$cache = [];
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id, 'type' => 'note']));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id, 'type' => 'note']));
         $response->assertStatus(200);
     }
 
@@ -166,7 +166,7 @@ class ReportTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', [
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', [
             'mailbox' => $this->mailbox->id,
             'custom_fields' => [
                 $fieldId => 'Support',
@@ -252,7 +252,7 @@ class ReportTest extends TestCase
         $this->conversation->customer_id = $customerId;
         $this->conversation->save();
 
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
         $response->assertStatus(200);
     }
 
@@ -291,7 +291,7 @@ class ReportTest extends TestCase
         $this->conversation->customer_id = $customerId;
         $this->conversation->save();
 
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', [
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', [
             'mailbox' => $this->mailbox->id,
             'export' => 'csv'
         ]));
@@ -348,7 +348,7 @@ class ReportTest extends TestCase
         ]);
 
         // 1. Non-array selected custom fields (covers line 150)
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', [
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', [
             'mailbox' => $this->mailbox->id,
             'custom_fields' => 'not-an-array'
         ]));
@@ -363,7 +363,7 @@ class ReportTest extends TestCase
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
         $response->assertStatus(200);
 
         // 3. Exactly 3600 seconds (singular hour, zero minutes) to cover formatTimeSpent branch
@@ -375,7 +375,7 @@ class ReportTest extends TestCase
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', ['mailbox' => $this->mailbox->id]));
         $response->assertStatus(200);
 
         // 4. Conversation without number and subject fallbacks in CSV
@@ -408,7 +408,7 @@ class ReportTest extends TestCase
         $thread->type = Thread::TYPE_MESSAGE;
         $thread->save();
 
-        $response = $this->get(route('laporpoliwangi.reports.time_tracking', [
+        $response = $this->get(route('PoliwangiPortal.reports.time_tracking', [
             'mailbox' => $this->mailbox->id,
             'export' => 'csv'
         ]));

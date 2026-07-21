@@ -7,10 +7,8 @@ use App\User;
 use App\Mailbox;
 use App\Conversation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
-use Modules\LaporPoliwangi\Http\Controllers\CustomFieldValueController;
-use Modules\LaporPoliwangi\Models\CustomField;
-use Modules\LaporPoliwangi\Models\CustomFieldValue;
+use Modules\PoliwangiCustomField\Models\CustomField;
+use Modules\PoliwangiCustomField\Models\CustomFieldValue;
 
 class CustomFieldValueTest extends TestCase
 {
@@ -19,6 +17,7 @@ class CustomFieldValueTest extends TestCase
     protected $admin;
     protected $mailbox;
     protected $conversation;
+    protected $routePrefix;
 
     protected function setUp(): void
     {
@@ -37,33 +36,30 @@ class CustomFieldValueTest extends TestCase
             'state' => Conversation::STATUS_ACTIVE,
         ]);
 
-        // Register temporary routes to test the controller methods directly
-        Route::post('/test/cfv/store', '\Modules\LaporPoliwangi\Http\Controllers\CustomFieldValueController@store');
-        Route::get('/test/cfv/get/{conversation_id}', '\Modules\LaporPoliwangi\Http\Controllers\CustomFieldValueController@getByConversation');
-        Route::get('/test/cfv/form/{conversation_id}/{mailbox_id}', '\Modules\LaporPoliwangi\Http\Controllers\CustomFieldValueController@getForm');
+        $this->routePrefix = \Helper::getSubdirectory() . 'lapor-poliwangi';
 
         $this->actingAs($this->admin);
         $this->withoutMiddleware();
     }
 
-    public function test_store_custom_field_value_success()
+    public function test_update_custom_field_value_success()
     {
         $field = CustomField::create([
             'mailbox_id' => $this->mailbox->id,
-            'type' => 'text',
-            'name' => 'ID Card'
+            'type_field' => 'text',
+            'nama_field' => 'ID Card'
         ]);
 
-        $response = $this->post('/test/cfv/store', [
+        $response = $this->post($this->routePrefix . '/conversations/custom-field-value/update', [
             'conversation_id' => $this->conversation->id,
-            'mailbox_id' => $this->mailbox->id,
-            'custom_fields' => [
-                $field->id => '123456789'
-            ]
+            'custom_field_id' => $field->id,
+            'value' => '123456789'
         ]);
 
-        $response->assertRedirect();
-        $response->assertSessionHas('success', 'Custom field berhasil disimpan');
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'status' => 'success',
+        ]);
 
         $this->assertDatabaseHas('custom_field_values', [
             'custom_field_id' => $field->id,
@@ -72,110 +68,64 @@ class CustomFieldValueTest extends TestCase
         ]);
     }
 
-    public function test_store_custom_field_value_with_array()
+    public function test_update_custom_field_value_with_array()
     {
         $field = CustomField::create([
             'mailbox_id' => $this->mailbox->id,
-            'type' => 'multiselect',
-            'name' => 'Hobbies'
+            'type_field' => 'multiselect',
+            'nama_field' => 'Hobbies',
+            'options' => ['Reading', 'Swimming', 'Coding']
         ]);
 
-        $response = $this->post('/test/cfv/store', [
+        $response = $this->post($this->routePrefix . '/conversations/custom-field-value/update', [
             'conversation_id' => $this->conversation->id,
-            'mailbox_id' => $this->mailbox->id,
-            'custom_fields' => [
-                $field->id => ['Reading', 'Swimming']
-            ]
+            'custom_field_id' => $field->id,
+            'value' => ['Reading', 'Swimming']
         ]);
 
-        $response->assertRedirect();
-        $response->assertSessionHas('success', 'Custom field berhasil disimpan');
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'status' => 'success',
+        ]);
 
         $this->assertDatabaseHas('custom_field_values', [
             'custom_field_id' => $field->id,
             'conversation_id' => $this->conversation->id,
-            'value' => 'Reading, Swimming'
+            'value' => json_encode(['Reading', 'Swimming'])
         ]);
     }
 
-    public function test_store_missing_conversation_or_mailbox_id()
+    public function test_update_missing_conversation_or_custom_field()
     {
-        $response = $this->post('/test/cfv/store', [
-            'mailbox_id' => $this->mailbox->id,
-            'custom_fields' => []
+        $response = $this->post($this->routePrefix . '/conversations/custom-field-value/update', [
+            // missing both
         ]);
 
-        $response->assertRedirect();
-        $response->assertSessionHas('error', 'Conversation atau mailbox tidak ditemukan.');
-    }
-
-    public function test_get_by_conversation()
-    {
-        $field = CustomField::create([
-            'mailbox_id' => $this->mailbox->id,
-            'type' => 'text',
-            'name' => 'Location'
-        ]);
-
-        CustomFieldValue::create([
-            'custom_field_id' => $field->id,
-            'conversation_id' => $this->conversation->id,
-            'value' => 'Banyuwangi'
-        ]);
-
-        $response = $this->get('/test/cfv/get/' . $this->conversation->id);
-
-        $response->assertStatus(200);
+        $response->assertStatus(404);
         $response->assertJsonFragment([
-            'value' => 'Banyuwangi'
+            'status' => 'error',
+            'msg' => 'Conversation not found.'
         ]);
     }
 
-    public function test_get_form()
-    {
-        $this->withExceptionHandling();
-        
-        $field = CustomField::create([
-            'mailbox_id' => $this->mailbox->id,
-            'type' => 'text',
-            'name' => 'Notes'
-        ]);
-
-        CustomFieldValue::create([
-            'custom_field_id' => $field->id,
-            'conversation_id' => $this->conversation->id,
-            'value' => 'Some notes'
-        ]);
-
-        $response = $this->get('/test/cfv/form/' . $this->conversation->id . '/' . $this->mailbox->id);
-
-        if ($response->status() === 500) {
-            $this->assertTrue(true, 'View custom_fields.form probably does not exist, but method was hit.');
-        } else {
-            $response->assertStatus(200);
-            $response->assertViewHas('fields');
-            $response->assertViewHas('values');
-        }
-    }
-
-    public function test_store_custom_field_validation_fails()
+    public function test_update_custom_field_validation_fails()
     {
         $field = CustomField::create([
             'mailbox_id' => $this->mailbox->id,
-            'type' => 'text',
-            'name' => 'Required Field',
+            'type_field' => 'text',
+            'nama_field' => 'Required Field',
             'required' => true
         ]);
 
-        $response = $this->post('/test/cfv/store', [
+        $response = $this->post($this->routePrefix . '/conversations/custom-field-value/update', [
             'conversation_id' => $this->conversation->id,
-            'mailbox_id' => $this->mailbox->id,
-            'custom_fields' => [
-                $field->id => ''
-            ]
+            'custom_field_id' => $field->id,
+            'value' => ''
         ]);
 
-        $response->assertRedirect();
-        $response->assertSessionHas('error');
+        $response->assertStatus(422);
+        $response->assertJsonFragment([
+            'status' => 'error',
+        ]);
     }
 }

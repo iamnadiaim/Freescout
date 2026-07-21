@@ -9,8 +9,8 @@ use App\Customer;
 use App\Email;
 use App\Conversation;
 use App\Thread;
-use Modules\LaporPoliwangi\Models\SatisfactionRatingSetting;
-use Modules\LaporPoliwangi\Models\SatisfactionRating;
+use Modules\PoliwangiSatisfaction\Models\SatisfactionRatingSetting;
+use Modules\PoliwangiSatisfaction\Models\SatisfactionRating;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SatisfactionRatingTest extends TestCase
@@ -26,7 +26,7 @@ class SatisfactionRatingTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        \Artisan::call('migrate', ['--path' => 'Modules/LaporPoliwangi/Database/Migrations']);
+        \Artisan::call('migrate', ['--path' => 'Modules/PoliwangiSatisfaction/Database/Migrations']);
 
         $this->admin = factory(User::class)->create(['role' => User::ROLE_ADMIN]);
         $this->user = factory(User::class)->create(['role' => User::ROLE_USER]);
@@ -61,15 +61,15 @@ class SatisfactionRatingTest extends TestCase
         $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
         $this->actingAs($this->user);
         
-        $this->get(route('laporpoliwangi.satisfaction_ratings.index', $this->mailbox->id));
+        $this->get(route('PoliwangiPortal.satisfaction_ratings.index', $this->mailbox->id));
     }
 
     public function test_index_authorized()
     {
         $this->actingAs($this->admin);
-        $response = $this->get(route('laporpoliwangi.satisfaction_ratings.index', $this->mailbox->id));
+        $response = $this->get(route('PoliwangiPortal.satisfaction_ratings.index', $this->mailbox->id));
         $response->assertStatus(200);
-        $response->assertViewIs('laporpoliwangi::satisfaction_ratings.index');
+        $response->assertViewIs('poliwangisatisfaction::satisfaction_ratings.index');
     }
 
     // 2. updateSettings
@@ -78,7 +78,7 @@ class SatisfactionRatingTest extends TestCase
         $this->expectException(\Illuminate\Validation\ValidationException::class);
         $this->actingAs($this->admin);
         
-        $this->post(route('laporpoliwangi.satisfaction_ratings.update_settings', $this->mailbox->id), [
+        $this->post(route('PoliwangiPortal.satisfaction_ratings.update_settings', $this->mailbox->id), [
             'add_ratings_mode' => 'invalid_mode'
         ]);
     }
@@ -87,7 +87,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->actingAs($this->admin);
         
-        $response = $this->post(route('laporpoliwangi.satisfaction_ratings.update_settings', $this->mailbox->id), [
+        $response = $this->post(route('PoliwangiPortal.satisfaction_ratings.update_settings', $this->mailbox->id), [
             'enabled' => '1',
             'add_ratings_mode' => 'shortcode',
             'placement' => 'below',
@@ -109,7 +109,7 @@ class SatisfactionRatingTest extends TestCase
         $this->expectException(\Illuminate\Validation\ValidationException::class);
         $this->actingAs($this->admin);
         
-        $this->post(route('laporpoliwangi.satisfaction_ratings.update_translate', $this->mailbox->id), [
+        $this->post(route('PoliwangiPortal.satisfaction_ratings.update_translate', $this->mailbox->id), [
             'page_title' => ''
         ]);
     }
@@ -118,7 +118,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->actingAs($this->admin);
         
-        $response = $this->post(route('laporpoliwangi.satisfaction_ratings.update_translate', $this->mailbox->id), [
+        $response = $this->post(route('PoliwangiPortal.satisfaction_ratings.update_translate', $this->mailbox->id), [
             'page_title' => 'Custom Title',
             'header' => 'Header',
             'great_text' => 'Great',
@@ -140,7 +140,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->actingAs($this->admin);
         
-        $this->post(route('laporpoliwangi.satisfaction_ratings.reset_settings', $this->mailbox->id));
+        $this->post(route('PoliwangiPortal.satisfaction_ratings.reset_settings', $this->mailbox->id));
         $this->assertDatabaseHas('satisfaction_rating_settings', [
             'mailbox_id' => $this->mailbox->id,
             'add_ratings_mode' => 'all', // default
@@ -151,7 +151,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->actingAs($this->admin);
         
-        $this->post(route('laporpoliwangi.satisfaction_ratings.reset_translate', $this->mailbox->id));
+        $this->post(route('PoliwangiPortal.satisfaction_ratings.reset_translate', $this->mailbox->id));
         $this->assertDatabaseHas('satisfaction_rating_settings', [
             'mailbox_id' => $this->mailbox->id,
             'page_title' => 'Satisfaction Ratings', // default
@@ -162,15 +162,15 @@ class SatisfactionRatingTest extends TestCase
     public function test_report_view()
     {
         $this->actingAs($this->admin);
-        $response = $this->get(route('laporpoliwangi.satisfaction_ratings.report', $this->mailbox->id));
+        $response = $this->get(route('PoliwangiPortal.satisfaction_ratings.report', $this->mailbox->id));
         $response->assertStatus(200);
-        $response->assertViewIs('laporpoliwangi::satisfaction_ratings.report'); // fallback if needed
+        $response->assertViewIs('poliwangisatisfaction::satisfaction_ratings.report'); // fallback if needed
     }
 
     // 6. submitRating
     public function test_submit_rating_disabled()
     {
-        $response = $this->post(route('laporpoliwangi.end_user_portal.submit_satisfaction_rating', [
+        $response = $this->post(route('PoliwangiPortal.end_user_portal.submit_satisfaction_rating', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id
         ]));
@@ -183,7 +183,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->enableSettings();
 
-        $response = $this->post(route('laporpoliwangi.end_user_portal.submit_satisfaction_rating', [
+        $response = $this->post(route('PoliwangiPortal.end_user_portal.submit_satisfaction_rating', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id
         ]));
@@ -198,7 +198,7 @@ class SatisfactionRatingTest extends TestCase
         session(['end_user_portal_email' => 'customer@example.com']);
 
         $this->expectException(\Illuminate\Validation\ValidationException::class);
-        $this->post(route('laporpoliwangi.end_user_portal.submit_satisfaction_rating', [
+        $this->post(route('PoliwangiPortal.end_user_portal.submit_satisfaction_rating', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id
         ]), [
@@ -211,14 +211,14 @@ class SatisfactionRatingTest extends TestCase
         $this->enableSettings();
         session(['end_user_portal_email' => 'customer@example.com']);
 
-        $response = $this->post(route('laporpoliwangi.end_user_portal.submit_satisfaction_rating', [
+        $response = $this->post(route('PoliwangiPortal.end_user_portal.submit_satisfaction_rating', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => 999999
         ]), [
             'rating' => 'great'
         ]);
         
-        $response->assertRedirect(route('laporpoliwangi.end_user_portal.my_ticket'));
+        $response->assertRedirect(route('PoliwangiPortal.end_user_portal.my_ticket'));
         $response->assertSessionHasErrors(['rating']);
     }
 
@@ -227,14 +227,14 @@ class SatisfactionRatingTest extends TestCase
         $this->enableSettings();
         session(['end_user_portal_email' => 'other@example.com']);
 
-        $response = $this->post(route('laporpoliwangi.end_user_portal.submit_satisfaction_rating', [
+        $response = $this->post(route('PoliwangiPortal.end_user_portal.submit_satisfaction_rating', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id
         ]), [
             'rating' => 'great'
         ]);
         
-        $response->assertRedirect(route('laporpoliwangi.end_user_portal.my_ticket'));
+        $response->assertRedirect(route('PoliwangiPortal.end_user_portal.my_ticket'));
         $response->assertSessionHasErrors(['rating']);
     }
 
@@ -243,7 +243,7 @@ class SatisfactionRatingTest extends TestCase
         $this->enableSettings();
         session(['end_user_portal_email' => 'customer@example.com']);
 
-        $response = $this->post(route('laporpoliwangi.end_user_portal.submit_satisfaction_rating', [
+        $response = $this->post(route('PoliwangiPortal.end_user_portal.submit_satisfaction_rating', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id
         ]), [
@@ -260,7 +260,7 @@ class SatisfactionRatingTest extends TestCase
         $this->enableSettings();
         session(['end_user_portal_email' => 'customer@example.com']);
 
-        $response = $this->post(route('laporpoliwangi.end_user_portal.submit_satisfaction_rating', [
+        $response = $this->post(route('PoliwangiPortal.end_user_portal.submit_satisfaction_rating', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id
         ]), [
@@ -289,7 +289,7 @@ class SatisfactionRatingTest extends TestCase
             'state' => Thread::STATE_PUBLISHED,
         ]);
 
-        $response = $this->post(route('laporpoliwangi.end_user_portal.submit_satisfaction_rating', [
+        $response = $this->post(route('PoliwangiPortal.end_user_portal.submit_satisfaction_rating', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id
         ]), [
@@ -308,7 +308,7 @@ class SatisfactionRatingTest extends TestCase
     public function test_rate_from_email_disabled()
     {
         $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
-        $this->get(route('mailboxes.satisfaction_ratings.rate_from_email', [
+        $this->get(\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id,
             'thread_id' => 0,
@@ -320,7 +320,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->enableSettings();
         $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
-        $this->get(route('mailboxes.satisfaction_ratings.rate_from_email', [
+        $this->get(\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id,
             'thread_id' => 0,
@@ -332,7 +332,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->enableSettings();
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-        $this->get(route('mailboxes.satisfaction_ratings.rate_from_email', [
+        $this->get(\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => 999999,
             'thread_id' => 0,
@@ -344,7 +344,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->enableSettings();
         $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
-        $this->get(route('mailboxes.satisfaction_ratings.rate_from_email', [
+        $this->get(\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id,
             'thread_id' => 0,
@@ -356,7 +356,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->enableSettings();
         $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
-        $this->get(route('mailboxes.satisfaction_ratings.rate_from_email', [
+        $this->get(\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id,
             'thread_id' => 0,
@@ -368,7 +368,7 @@ class SatisfactionRatingTest extends TestCase
     {
         $this->enableSettings();
         $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
-        $this->get(route('mailboxes.satisfaction_ratings.rate_from_email', [
+        $this->get(\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id,
             'thread_id' => 999999,
@@ -379,7 +379,7 @@ class SatisfactionRatingTest extends TestCase
     public function test_rate_from_email_success_no_thread()
     {
         $this->enableSettings();
-        $response = $this->get(route('mailboxes.satisfaction_ratings.rate_from_email', [
+        $response = $this->get(\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id,
             'thread_id' => 0,
@@ -387,7 +387,7 @@ class SatisfactionRatingTest extends TestCase
         ]) . '?email=customer@example.com');
         
         $response->assertStatus(200);
-        $response->assertViewIs('laporpoliwangi::satisfaction_ratings.thank_you');
+        $response->assertViewIs('poliwangisatisfaction::satisfaction_ratings.thank_you');
 
         $this->assertDatabaseHas('satisfaction_ratings', [
             'conversation_id' => $this->conversation->id,
@@ -404,7 +404,7 @@ class SatisfactionRatingTest extends TestCase
             'state' => Thread::STATE_PUBLISHED,
         ]);
 
-        $response = $this->get(route('mailboxes.satisfaction_ratings.rate_from_email', [
+        $response = $this->get(\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', [
             'mailbox_id' => $this->mailbox->id,
             'conversation_id' => $this->conversation->id,
             'thread_id' => $thread->id,

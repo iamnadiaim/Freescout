@@ -326,7 +326,10 @@ class Module extends Model
                 // file_exists() also checks if symlink target exists.
                 // file_exists() and is_dir() may throw "open_basedir restriction in effect".
                 try {
-                    if (!file_exists($from) || !is_link($from)) {
+                    // On Windows, Directory Junctions return false for is_link().
+                    // We allow is_dir() to pass on Windows to prevent infinite rename loops.
+                    $isWindowsJunction = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && is_dir($from));
+                    if (!file_exists($from) || (!is_link($from) && !$isWindowsJunction)) {
                         if (is_dir($from)) {
                             @rename($from, $from.'_'.date('YmdHis'));
                         } else {

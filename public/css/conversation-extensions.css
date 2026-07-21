@@ -131,7 +131,12 @@
 }
 
 .saved-replies-dropdown.show {
-    display: block;
+    display: block !important;
+}
+
+/* Ensure the toolbar doesn't clip our dropdown */
+.note-toolbar, .redactor-toolbar {
+    overflow: visible !important;
 }
 
 .saved-replies-category-block {

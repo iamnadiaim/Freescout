@@ -622,7 +622,6 @@ return [
         // does not have a `extra` section.
         Codedge\Updater\UpdaterServiceProvider::class,
 
-        Modules\LaporPoliwangi\Providers\LaporPoliwangiServiceProvider::class,
     ],
 
     /*

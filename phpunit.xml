@@ -19,7 +19,7 @@
   </php>
     <coverage>
         <include>
-            <directory suffix=".php">./Modules/LaporPoliwangi</directory>
+            <directory suffix=".php">./Modules</directory>
         </include>
     </coverage>
 </phpunit>

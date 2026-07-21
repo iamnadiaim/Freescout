@@ -101,7 +101,7 @@ class ModuleInstall extends Command
             
             // Symlimk may exist but lead to the module folder in a wrong case.
             // So we need first try to remove it.
-            if (!file_exists($from) || !is_link($from)) {
+            if (!file_exists($from) || (!is_link($from) && !is_dir($from))) {
                 if (is_dir($from)) {
                     @rename($from, $from.'_'.date('YmdHis'));
                 } else {

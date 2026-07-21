@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\User;
 use App\Mailbox;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Modules\LaporPoliwangi\Models\SavedReply;
+use Modules\PoliwangiSavedReply\Models\SavedReply;
 
 class SavedRepliesTest extends TestCase
 {
@@ -55,7 +55,7 @@ class SavedRepliesTest extends TestCase
 
 
         $response = $this->get(
-            route('laporpoliwangi.saved_replies', [
+            route('PoliwangiPortal.saved_replies', [
                 'id' => $this->mailbox->id
             ])
         );
@@ -79,7 +79,7 @@ class SavedRepliesTest extends TestCase
     public function test_store_saved_reply_success()
     {
         $response = $this->post(
-            route('laporpoliwangi.saved_replies.store', [
+            route('PoliwangiPortal.saved_replies.store', [
                 'id' => $this->mailbox->id
             ]),
             [
@@ -110,7 +110,7 @@ class SavedRepliesTest extends TestCase
     public function test_store_saved_reply_validation_failed()
     {
         $response = $this->post(
-            route('laporpoliwangi.saved_replies.store', [
+            route('PoliwangiPortal.saved_replies.store', [
                 'id' => $this->mailbox->id
             ]),
             [
@@ -141,7 +141,7 @@ class SavedRepliesTest extends TestCase
 
 
         $response = $this->post(
-            route('laporpoliwangi.saved_replies.store', [
+            route('PoliwangiPortal.saved_replies.store', [
                 'id' => $this->mailbox->id
             ]),
             [
@@ -181,7 +181,7 @@ class SavedRepliesTest extends TestCase
 
 
         $response = $this->post(
-            route('laporpoliwangi.saved_replies.store', [
+            route('PoliwangiPortal.saved_replies.store', [
                 'id' => $this->mailbox->id
             ]),
             [
@@ -206,7 +206,7 @@ class SavedRepliesTest extends TestCase
     {
 
         $response = $this->post(
-            route('laporpoliwangi.saved_replies.store', [
+            route('PoliwangiPortal.saved_replies.store', [
                 'id' => $this->mailbox->id
             ]),
             [
@@ -221,10 +221,6 @@ class SavedRepliesTest extends TestCase
             'parent_id'
         ]);
     }
-
-
-
-
 
     /**
      * UPDATE
@@ -242,7 +238,7 @@ class SavedRepliesTest extends TestCase
 
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $reply->id
             ]),
@@ -296,7 +292,7 @@ class SavedRepliesTest extends TestCase
 
 
         $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $parent->id
             ]),
@@ -336,7 +332,7 @@ class SavedRepliesTest extends TestCase
 
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $reply->id
             ]),
@@ -374,7 +370,7 @@ class SavedRepliesTest extends TestCase
 
 
         $response = $this->delete(
-            route('laporpoliwangi.saved_replies.destroy', [
+            route('PoliwangiPortal.saved_replies.destroy', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $reply->id
             ])
@@ -417,7 +413,7 @@ class SavedRepliesTest extends TestCase
 
 
         $response = $this->delete(
-            route('laporpoliwangi.saved_replies.destroy', [
+            route('PoliwangiPortal.saved_replies.destroy', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $parent->id
             ])
@@ -447,7 +443,7 @@ class SavedRepliesTest extends TestCase
         $this->actingAs($this->user);
 
         $response = $this->get(
-            route('laporpoliwangi.saved_replies', ['id' => $this->mailbox->id])
+            route('PoliwangiPortal.saved_replies', ['id' => $this->mailbox->id])
         );
 
         $response->assertStatus(403);
@@ -467,7 +463,7 @@ class SavedRepliesTest extends TestCase
         ]);
 
         $response = $this->post(
-            route('laporpoliwangi.saved_replies.store', ['id' => $this->mailbox->id]),
+            route('PoliwangiPortal.saved_replies.store', ['id' => $this->mailbox->id]),
             [
                 'name' => 'Child',
                 'reply' => 'Reply',
@@ -492,7 +488,7 @@ class SavedRepliesTest extends TestCase
         ]);
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $reply->id
             ]),
@@ -524,7 +520,7 @@ class SavedRepliesTest extends TestCase
         ]);
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $child->id
             ]),
@@ -571,7 +567,7 @@ class SavedRepliesTest extends TestCase
         ]);
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $category->id
             ]),
@@ -602,7 +598,7 @@ class SavedRepliesTest extends TestCase
         auth()->logout();
 
         $response = $this->get(
-            route('laporpoliwangi.saved_replies', ['id' => $this->mailbox->id])
+            route('PoliwangiPortal.saved_replies', ['id' => $this->mailbox->id])
         );
 
         $response->assertStatus(403);
@@ -622,7 +618,7 @@ class SavedRepliesTest extends TestCase
         $this->actingAs($otherUser);
 
         $response = $this->get(
-            route('laporpoliwangi.saved_replies', ['id' => $this->mailbox->id])
+            route('PoliwangiPortal.saved_replies', ['id' => $this->mailbox->id])
         );
 
         $response->assertStatus(403);
@@ -636,7 +632,7 @@ class SavedRepliesTest extends TestCase
         $this->withExceptionHandling();
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => 99999
             ]),
@@ -670,7 +666,7 @@ class SavedRepliesTest extends TestCase
         ]);
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $reply->id
             ]),
@@ -704,7 +700,7 @@ class SavedRepliesTest extends TestCase
         ]);
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $reply->id
             ]),
@@ -752,7 +748,7 @@ class SavedRepliesTest extends TestCase
         ]);
 
         $response = $this->put(
-            route('laporpoliwangi.saved_replies.update', [
+            route('PoliwangiPortal.saved_replies.update', [
                 'id' => $this->mailbox->id,
                 'reply_id' => $child1->id
             ]),

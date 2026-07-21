@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false">
+    <testsuites>
+        <testsuite name="Modules">
+            <directory suffix="Test.php">./Modules/PoliwangiCustomField/Tests/Feature/Http/Controllers</directory>
+            <directory suffix="Test.php">./Modules/PoliwangiNotification/Tests/Feature/Http/Controllers</directory>
+            <directory suffix="Test.php">./Modules/PoliwangiPortal/Tests/Feature/Http/Controllers</directory>
+            <directory suffix="Test.php">./Modules/PoliwangiReport/Tests/Feature/Http/Controllers</directory>
+            <directory suffix="Test.php">./Modules/PoliwangiSatisfaction/Tests/Feature/Http/Controllers</directory>
+            <directory suffix="Test.php">./Modules/PoliwangiSavedReply/Tests/Feature/Http/Controllers</directory>
+            <directory suffix="Test.php">./Modules/PoliwangiTimeTracking/Tests/Feature/Http/Controllers</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./Modules/PoliwangiCustomField/Http/Controllers</directory>
+            <directory suffix=".php">./Modules/PoliwangiNotification/Http/Controllers</directory>
+            <directory suffix=".php">./Modules/PoliwangiPortal/Http/Controllers</directory>
+            <directory suffix=".php">./Modules/PoliwangiReport/Http/Controllers</directory>
+            <directory suffix=".php">./Modules/PoliwangiSatisfaction/Http/Controllers</directory>
+            <directory suffix=".php">./Modules/PoliwangiSavedReply/Http/Controllers</directory>
+            <directory suffix=".php">./Modules/PoliwangiTimeTracking/Http/Controllers</directory>
+        </whitelist>
+    </filter>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="QUEUE_DRIVER" value="sync"/>
+        <env name="MAIL_DRIVER" value="array"/>
+    </php>
+</phpunit>

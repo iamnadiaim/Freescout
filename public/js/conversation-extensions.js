@@ -87,71 +87,87 @@
         return true;
     });
 
-    setTimeout(function () {
-        var wrapper = $('#saved-replies-wrapper');
-        var toolbar = $('.note-toolbar').first();
+    var attempts = 0;
+    var initSavedReplies = setInterval(function () {
+        attempts++;
+        var wrappers = $('.js-saved-replies-wrapper');
+        
+        var anyMoved = false;
+        wrappers.each(function() {
+            var wrapper = $(this);
+            // Ignore if already moved inside a toolbar
+            if (wrapper.parent().hasClass('note-toolbar') || wrapper.parent().hasClass('redactor-toolbar')) {
+                return;
+            }
+            
+            // Find the closest editor toolbar by traversing up the DOM
+            var container = wrapper.parent();
+            var toolbar = container.find('.note-toolbar, .redactor-toolbar').first();
+            
+            while (!toolbar.length && !container.is('body')) {
+                container = container.parent();
+                toolbar = container.find('.note-toolbar, .redactor-toolbar').first();
+            }
+            
+            if (toolbar.length) {
+                toolbar.append(wrapper);
+                anyMoved = true;
+                
+                // Bind click events DIRECTLY to the elements, bypassing document delegation
+                // which gets blocked by Summernote's stopPropagation on the toolbar.
+                wrapper.find('.js-saved-replies-toggle').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    wrapper.find('.js-saved-replies-dropdown').toggleClass('show');
+                    $(this).toggleClass('active');
+                });
+                
+                wrapper.find('.saved-replies-category-toggle').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var block = $(this).closest('.saved-replies-category-block');
+                    $('.saved-replies-category-block').not(block).removeClass('open');
+                    block.toggleClass('open');
+                });
+                
+                wrapper.find('.saved-replies-item').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var replyId = $(this).data('id');
+                    var replyText = $(this).attr('data-reply') || '';
+                    $('input[name="saved_reply_id"]').val(replyId);
+                    appendReplyBodyContent(replyText);
+                    wrapper.find('.js-saved-replies-dropdown').removeClass('show');
+                    wrapper.find('.js-saved-replies-toggle').removeClass('active');
+                });
+                
+                wrapper.find('.js-saved-replies-save-this').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var currentReply = getReplyBodyContent();
+                    $('#save-this-reply-body').val(currentReply);
+                    $('#save-this-reply-name').val('');
+                    wrapper.find('.js-saved-replies-dropdown').removeClass('show');
+                    wrapper.find('.js-saved-replies-toggle').removeClass('active');
+                    $('#saveThisReplyModal').modal('show');
+                    setTimeout(function () {
+                        $('#save-this-reply-name').focus();
+                    }, 300);
+                });
+            }
+        });
 
-        if (toolbar.length && wrapper.length) {
-            toolbar.append(wrapper);
+        if (anyMoved || attempts > 20) {
+            clearInterval(initSavedReplies); // Give up after 10 seconds or when moved
         }
-    }, 700);
+    }, 500);
 
-    $(document).on('click', '#saved-replies-toggle', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        $('#saved-replies-dropdown').toggleClass('show');
-        $(this).toggleClass('active');
-    });
-
-    $(document).on('click', '.saved-replies-category-toggle', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        var block = $(this).closest('.saved-replies-category-block');
-
-        $('.saved-replies-category-block').not(block).removeClass('open');
-        block.toggleClass('open');
-    });
-
-    $(document).on('click', '.saved-replies-item', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        var replyId = $(this).data('id');
-        var replyText = $(this).attr('data-reply') || '';
-
-        $('input[name="saved_reply_id"]').val(replyId);
-
-        appendReplyBodyContent(replyText);
-
-        $('#saved-replies-dropdown').removeClass('show');
-        $('#saved-replies-toggle').removeClass('active');
-    });
-
-    $(document).on('click', '#saved-replies-save-this', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        var currentReply = getReplyBodyContent();
-
-        $('#save-this-reply-body').val(currentReply);
-        $('#save-this-reply-name').val('');
-
-        $('#saved-replies-dropdown').removeClass('show');
-        $('#saved-replies-toggle').removeClass('active');
-
-        $('#saveThisReplyModal').modal('show');
-
-        setTimeout(function () {
-            $('#save-this-reply-name').focus();
-        }, 300);
-    });
-
+    // Click outside to close is still on document, this is fine because clicks OUTSIDE 
+    // the toolbar will reach the document and close the dropdown.
     $(document).on('click', function (e) {
-        if (!$(e.target).closest('#saved-replies-wrapper').length) {
-            $('#saved-replies-dropdown').removeClass('show');
-            $('#saved-replies-toggle').removeClass('active');
+        if (!$(e.target).closest('.js-saved-replies-wrapper').length) {
+            $('.js-saved-replies-dropdown').removeClass('show');
+            $('.js-saved-replies-toggle').removeClass('active');
         }
     });
 
