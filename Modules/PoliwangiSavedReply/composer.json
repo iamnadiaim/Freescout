@@ -1,0 +1,25 @@
+{
+    "name": "freescout/poliwangisavedreply",
+    "description": "",
+    "authors": [
+        {
+            "name": "FreeScout",
+            "email": "support@freescout.net"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\PoliwangiSavedReply\\Providers\\PoliwangiSavedReplyServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\PoliwangiSavedReply\\": ""
+        }
+    }
+}

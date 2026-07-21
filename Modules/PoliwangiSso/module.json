@@ -1,0 +1,11 @@
+{
+    "name": "PoliwangiSso",
+    "alias": "poliwangisso",
+    "description": "Agent Login via Poliwangi SSO (OAuth2/OIDC)",
+    "version": "1.0.0",
+    "active": 1,
+    "order": 1,
+    "providers": [
+        "Modules\\PoliwangiSso\\Providers\\PoliwangiSsoServiceProvider"
+    ]
+}

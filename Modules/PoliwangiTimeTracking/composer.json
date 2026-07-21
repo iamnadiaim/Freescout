@@ -1,0 +1,25 @@
+{
+    "name": "freescout/poliwangitimetracking",
+    "description": "",
+    "authors": [
+        {
+            "name": "FreeScout",
+            "email": "support@freescout.net"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\PoliwangiTimeTracking\\Providers\\PoliwangiTimeTrackingServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\PoliwangiTimeTracking\\": ""
+        }
+    }
+}

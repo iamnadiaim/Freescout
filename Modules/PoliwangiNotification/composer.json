@@ -1,0 +1,25 @@
+{
+    "name": "freescout/poliwanginotification",
+    "description": "",
+    "authors": [
+        {
+            "name": "FreeScout",
+            "email": "support@freescout.net"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\PoliwangiNotification\\Providers\\PoliwangiNotificationServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\PoliwangiNotification\\": ""
+        }
+    }
+}

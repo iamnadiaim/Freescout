@@ -1,0 +1,14 @@
+{
+    "name": "PoliwangiPortal",
+    "alias": "poliwangiportal",
+    "description": "Module tambahan untuk fitur Poliwangi Portal seperti ticket number, custom field, time tracking, portal, dan notifikasi.",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\PoliwangiPortal\\Providers\\PoliwangiPortalServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

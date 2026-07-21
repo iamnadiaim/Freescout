@@ -1,0 +1,25 @@
+{
+    "name": "freescout/poliwangireport",
+    "description": "",
+    "authors": [
+        {
+            "name": "FreeScout",
+            "email": "support@freescout.net"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\PoliwangiReport\\Providers\\PoliwangiReportServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\PoliwangiReport\\": ""
+        }
+    }
+}

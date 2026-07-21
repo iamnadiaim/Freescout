@@ -1,0 +1,22 @@
+{
+    "name": "PoliwangiNotification",
+    "alias": "poliwanginotification",
+    "description": "",
+    "version": "1.0.0",
+    "detailsUrl": "",
+    "author": "",
+    "authorUrl": "",
+    "requiredAppVersion": "1.0.2",
+    "license": "AGPL-3.0",
+    "keywords": [],
+    "active": 0,
+    "order": 0,
+    "providers": [
+        "Modules\\PoliwangiNotification\\Providers\\PoliwangiNotificationServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "start.php"
+    ],
+    "requires": []
+}
