@@ -55,6 +55,12 @@ class EmailHook
             }
         }
 
+        // Generate a random token if not exists to secure the rating URL
+        if (empty($conversation->satisfaction_rating_token)) {
+            $conversation->satisfaction_rating_token = \Illuminate\Support\Str::random(40);
+            $conversation->save();
+        }
+
         // Render the blade template
         echo view('poliwangisatisfaction::emails.rating_block', [
             'thread' => $thread,

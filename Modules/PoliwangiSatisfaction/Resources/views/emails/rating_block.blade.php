@@ -7,7 +7,7 @@
         <tr>
             <!-- Great -->
             <td align="center" style="padding: 0 10px;">
-                <a href="{{ \Illuminate\Support\Facades\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', ['mailbox_id' => $mailbox->id, 'conversation_id' => $conversation->id, 'thread_id' => $thread->id, 'rating' => 'great', 'email' => $conversation->customer_email]) }}" style="text-decoration: none; display: inline-block;">
+                <a href="{{ route('mailboxes.satisfaction_ratings.rate_from_email', ['mailbox_id' => $mailbox->id, 'token' => $conversation->satisfaction_rating_token, 'rating' => 'great']) }}" style="text-decoration: none; display: inline-block;">
                     <img src="https://img.icons8.com/color/48/000000/happy.png" alt="Great" width="48" height="48" style="display: block; border: 0;" />
                     <span style="font-size: 12px; color: #4CAF50; display: block; margin-top: 5px;">{{ $setting->great_text }}</span>
                 </a>
@@ -15,7 +15,7 @@
             
             <!-- Okay -->
             <td align="center" style="padding: 0 10px;">
-                <a href="{{ \Illuminate\Support\Facades\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', ['mailbox_id' => $mailbox->id, 'conversation_id' => $conversation->id, 'thread_id' => $thread->id, 'rating' => 'okay', 'email' => $conversation->customer_email]) }}" style="text-decoration: none; display: inline-block;">
+                <a href="{{ route('mailboxes.satisfaction_ratings.rate_from_email', ['mailbox_id' => $mailbox->id, 'token' => $conversation->satisfaction_rating_token, 'rating' => 'okay']) }}" style="text-decoration: none; display: inline-block;">
                     <img src="https://img.icons8.com/color/48/000000/neutral-emoticon.png" alt="Okay" width="48" height="48" style="display: block; border: 0;" />
                     <span style="font-size: 12px; color: #FF9800; display: block; margin-top: 5px;">{{ $setting->okay_text }}</span>
                 </a>
@@ -23,7 +23,7 @@
             
             <!-- Not Good -->
             <td align="center" style="padding: 0 10px;">
-                <a href="{{ \Illuminate\Support\Facades\URL::signedRoute('mailboxes.satisfaction_ratings.rate_from_email', ['mailbox_id' => $mailbox->id, 'conversation_id' => $conversation->id, 'thread_id' => $thread->id, 'rating' => 'not_good', 'email' => $conversation->customer_email]) }}" style="text-decoration: none; display: inline-block;">
+                <a href="{{ route('mailboxes.satisfaction_ratings.rate_from_email', ['mailbox_id' => $mailbox->id, 'token' => $conversation->satisfaction_rating_token, 'rating' => 'not_good']) }}" style="text-decoration: none; display: inline-block;">
                     <img src="https://img.icons8.com/color/48/000000/sad.png" alt="Not Good" width="48" height="48" style="display: block; border: 0;" />
                     <span style="font-size: 12px; color: #F44336; display: block; margin-top: 5px;">{{ $setting->not_good_text }}</span>
                 </a>

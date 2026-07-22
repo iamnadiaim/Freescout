@@ -53,7 +53,7 @@ Route::group([
     'namespace'  => 'Modules\PoliwangiSatisfaction\Http\Controllers',
 ], function () {
 
-    Route::get('/mailbox/{mailbox_id}/satisfaction-ratings/rate/{conversation_id}/{thread_id}/{rating}', [
+    Route::get('/mailbox/{mailbox_id}/satisfaction-ratings/rate/{token}/{rating}', [
         'uses' => 'SatisfactionRatingController@rateFromEmail',
         'as'   => 'mailboxes.satisfaction_ratings.rate_from_email',
     ]);

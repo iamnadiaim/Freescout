@@ -403,10 +403,8 @@ class SatisfactionRatingController extends Controller
             'ratings'
         ));
     }
-    public function rateFromEmail(Request $request, $mailbox_id, $conversation_id, $thread_id, $rating)
+    public function rateFromEmail(Request $request, $mailbox_id, $token, $rating)
     {
-        // Signature check disabled because it's not supported in this Laravel version
-
         $mailbox = Mailbox::findOrFail($mailbox_id);
 
         $setting = SatisfactionRatingSetting::where('mailbox_id', $mailbox->id)->first();
@@ -419,39 +417,31 @@ class SatisfactionRatingController extends Controller
             abort(404);
         }
 
-        $conversation = Conversation::where('id', $conversation_id)
+        $conversation = Conversation::where('satisfaction_rating_token', $token)
             ->where('mailbox_id', $mailbox->id)
             ->where('state', Conversation::STATE_PUBLISHED)
-            ->firstOrFail();
+            ->first();
 
-        $email = strtolower(trim((string) $request->query('email')));
+        if (!$conversation) {
+            abort(404, 'Invalid or expired rating link.');
+        }
 
-        if (!$email) {
+        // Token is verified! Find the latest published thread for this conversation to associate the rating.
+        $thread = Thread::where('conversation_id', $conversation->id)
+            ->where('state', Thread::STATE_PUBLISHED)
+            ->where('type', Thread::TYPE_MESSAGE)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if (!$thread) {
             abort(404);
         }
 
-        $customerIds = Email::whereRaw('LOWER(email) = ?', [$email])
-            ->pluck('customer_id')
-            ->toArray();
+        $threadId = $thread->id;
+        $email = $conversation->customer->email;
 
-        if (!in_array($conversation->customer_id, $customerIds)) {
-            abort(403);
-        }
-
-        $threadId = (int) $thread_id;
-
-        if ($threadId > 0) {
-            $thread = Thread::where('id', $threadId)
-                ->where('conversation_id', $conversation->id)
-                ->where('state', Thread::STATE_PUBLISHED)
-                ->first();
-
-            if (!$thread) {
-                abort(404);
-            }
-        } else {
-            $threadId = null;
-        }
+        // Check if rating exists
+        $existing = SatisfactionRating::where('conversation_id', $conversation->id)->first();
 
         SatisfactionRating::updateOrCreate(
             [
