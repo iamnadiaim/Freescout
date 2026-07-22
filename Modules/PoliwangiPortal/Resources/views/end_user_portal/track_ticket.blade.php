@@ -198,8 +198,8 @@
             @endif
 
             <div class="tabs">
-                <button type="button" class="tab-btn active" onclick="switchTab('email')">Pelapor Normal (Email)</button>
-                <button type="button" class="tab-btn" onclick="switchTab('anonim')">Pelapor Anonim</button>
+                <button type="button" class="tab-btn active" onclick="switchTab('email')">Pelaporan Terbuka</button>
+                <button type="button" class="tab-btn" onclick="switchTab('anonim')">Pelaporan Anonim</button>
             </div>
 
             <!-- Tab Email -->
@@ -227,11 +227,11 @@
                     {{ csrf_field() }}
                     
                     <div class="form-group">
-                        <label class="form-label">Kode Pelacak Rahasia</label>
-                        <input type="text" name="tracking_code" class="form-control" placeholder="Masukkan Kode Pelacak" value="{{ old('tracking_code') ?? '' }}" required>
+                        <label class="form-label">Kode Akses Pelacak</label>
+                        <input type="text" name="tracking_code" class="form-control" placeholder="Masukkan Kode Akses Pelacak" value="{{ old('tracking_code') ?? '' }}" required>
                     </div>
 
-                    <button type="submit" class="btn-track">Cek Status Anonim</button>
+                    <button type="submit" class="btn-track">Cek Status dengan Kode</button>
                 </form>
             </div>
 

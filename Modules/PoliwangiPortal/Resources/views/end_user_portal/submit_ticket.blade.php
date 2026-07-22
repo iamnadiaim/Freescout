@@ -718,10 +718,9 @@
                         <div class="hero-step">
                             <div class="hero-step-number">1</div>
                             <div>
-                                <div class="hero-step-title">Isi Identitas Jika Diperlukan</div>
+                                <div class="hero-step-title">Isi Identitas Anda</div>
                                 <div class="hero-step-desc">
-                                    Nama dan email bersifat opsional. Kosongkan jika ingin laporan tercatat sebagai
-                                    anonim.
+                                    Nama wajib diisi untuk Pelaporan Terbuka. Jika ingin melapor secara anonim, silakan pilih opsi Pelaporan Anonim.
                                 </div>
                             </div>
                         </div>
@@ -779,12 +778,12 @@
                                         </div>
                                     </div>
                                     <p class="ticket-note" style="color: #d84315; font-weight: bold;">Anda sedang melapor secara Anonim. Anda WAJIB menyimpan Kode Pelacak di atas untuk mengecek status dan balasan dari Admin.</p>
-                                @elseif (session('secret_tracking_code_biasa'))
-                                    <div class="ticket-number-box" style="background: #eef2f7; border: 1px solid #cfd8e3;">
-                                        <span class="ticket-label" style="color: #25384b; font-weight: bold;">SIMPAN KODE PELACAK INI</span>
+                                @elseif (session('secret_tracking_code_terbuka'))
+                                    <div class="ticket-number-box">
+                                        <span class="ticket-label">Nomor Tiket Anda</span>
                                         <div class="ticket-number-flex">
-                                            <span class="ticket-number" id="ticketNumberText" style="color: #0a84df;">{{ session('secret_tracking_code_biasa') }}</span>
-                                            <button class="btn-copy-ticket" onclick="copyTicketNumber()" title="Salin Kode Pelacak">
+                                            <span class="ticket-number" id="ticketNumberText">#{{ session('ticket_number') }}</span>
+                                            <button class="btn-copy-ticket" onclick="copyTicketNumber()" title="Salin Nomor Tiket">
                                                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -792,7 +791,21 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <p class="ticket-note" style="color: #25384b; font-weight: bold;">Karena Anda tidak mengisi Email, Anda WAJIB menyimpan Kode Pelacak di atas untuk mengecek status dan balasan dari Admin.</p>
+                                    
+                                    <div style="background: #eef2f7; border: 1px solid #cfd8e3; border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+                                        <span style="display: block; font-size: 12px; color: #25384b; font-weight: bold; margin-bottom: 6px; text-transform: uppercase;">Kode Akses Pelacak</span>
+                                        <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+                                            <span style="font-size: 20px; font-weight: 900; color: #0a84df;" id="trackingCodeText">{{ session('secret_tracking_code_terbuka') }}</span>
+                                            <button style="background: transparent; border: none; color: #0a84df; cursor: pointer;" onclick="navigator.clipboard.writeText('{{ session('secret_tracking_code_terbuka') }}'); alert('Kode Akses tersalin!');" title="Salin Kode Akses">
+                                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="ticket-note" style="color: #25384b;">Karena Anda tidak mengisi Email, Anda WAJIB menyimpan <strong>Kode Akses Pelacak</strong> di atas untuk mengecek status dan balasan dari Admin di menu Cek Status.</p>
                                 @elseif (session('ticket_number'))
                                     <div class="ticket-number-box">
                                         <span class="ticket-label">Nomor Tiket Anda</span>
@@ -1022,10 +1035,10 @@
                                     } catch (e) {
                                         console.error('Failed to save ticket to local storage', e);
                                     }
-                                @elseif (session('secret_tracking_code_biasa'))
+                                @elseif (session('secret_tracking_code_terbuka'))
                                     try {
                                         const newTicket = {
-                                            number: '{{ session("secret_tracking_code_biasa") }}',
+                                            number: '{{ session("secret_tracking_code_terbuka") }}',
                                             subject: @json(session("ticket_subject", "Laporan Tanpa Email")),
                                             date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
                                         };
@@ -1089,13 +1102,13 @@
                             value="{{ old('subject', 'New Ticket from End-User Portal') }}">
 
                         <div class="report-type-options">
-                            <label class="report-type-card active" id="cardBiasa">
-                                <input type="radio" name="report_type" value="biasa" class="report-type-radio" checked onchange="toggleReportType()">
+                            <label class="report-type-card active" id="cardTerbuka">
+                                <input type="radio" name="report_type" value="terbuka" class="report-type-radio" checked onchange="toggleReportType()">
                                 <div class="report-type-header">
                                     <div class="report-type-icon"></div>
-                                    <div class="report-type-title">Laporan Biasa</div>
+                                    <div class="report-type-title">Pelaporan Terbuka</div>
                                 </div>
-                                <div class="report-type-desc">Identitas dapat disertakan atau dikosongkan.</div>
+                                <div class="report-type-desc">Nama dan Email wajib disertakan.</div>
                             </label>
 
                             <label class="report-type-card" id="cardAnonim">
@@ -1113,7 +1126,6 @@
                             <div class="form-group" id="groupName">
                                 <label class="form-label">
                                     Nama
-                                    <span style="color:#9ca3af; font-weight:600;">(opsional)</span>
                                 </label>
 
                                 <input type="text" name="name" id="inputName" class="form-control"
@@ -1125,7 +1137,6 @@
                             <div class="form-group" id="groupEmail">
                                 <label class="form-label">
                                     Email
-                                    <span style="color:#9ca3af; font-weight:600;">(opsional)</span>
                                 </label>
 
                                 <input type="email" name="email" id="inputEmail" class="form-control"
@@ -1304,6 +1315,37 @@
             }
         }
 
+        function updateRequiredAsterisks() {
+            document.querySelectorAll('.required-asterisk').forEach(function(el) {
+                el.remove();
+            });
+
+            var requiredElements = document.querySelectorAll('input[required], select[required], textarea[required]');
+            requiredElements.forEach(function(el) {
+                var label = null;
+                
+                if (el.parentElement && el.parentElement.tagName === 'LABEL') {
+                    label = el.parentElement;
+                } else if (el.previousElementSibling && el.previousElementSibling.tagName === 'LABEL') {
+                    label = el.previousElementSibling;
+                } else {
+                    var wrapper = el.closest('.form-group, .margin-bottom, .custom-field');
+                    if (wrapper) {
+                        label = wrapper.querySelector('label');
+                    }
+                }
+
+                if (label && !label.querySelector('.required-asterisk')) {
+                    var asterisk = document.createElement('span');
+                    asterisk.className = 'required-asterisk';
+                    asterisk.style.color = '#e11d48';
+                    asterisk.style.marginLeft = '4px';
+                    asterisk.innerHTML = '*';
+                    label.appendChild(asterisk);
+                }
+            });
+        }
+
         function refreshMailboxState(updateUrl) {
             if (!mailboxSelect) {
                 return;
@@ -1397,6 +1439,9 @@
                 consentInput.required = false;
                 consentInput.checked = false;
             }
+
+            // Update asterisks dynamically whenever mailbox changes
+            setTimeout(updateRequiredAsterisks, 50);
         }
 
         function initPortalMultiselects() {
@@ -1567,31 +1612,41 @@
         function toggleReportType() {
             var isAnonim = document.querySelector('input[name="report_type"][value="anonim"]').checked;
             
-            var cardBiasa = document.getElementById('cardBiasa');
+            var cardTerbuka = document.getElementById('cardTerbuka');
             var cardAnonim = document.getElementById('cardAnonim');
+            var inputName = document.getElementById('inputName');
             
             if (isAnonim) {
-                cardBiasa.classList.remove('active');
+                cardTerbuka.classList.remove('active');
                 cardAnonim.classList.add('active');
                 
                 document.getElementById('groupName').style.display = 'none';
                 document.getElementById('groupEmail').style.display = 'none';
                 
-                document.getElementById('inputName').value = '';
+                inputName.removeAttribute('required');
+                document.getElementById('inputEmail').removeAttribute('required');
+                inputName.value = '';
                 document.getElementById('inputEmail').value = '';
             } else {
                 cardAnonim.classList.remove('active');
-                cardBiasa.classList.add('active');
+                cardTerbuka.classList.add('active');
                 
                 document.getElementById('groupName').style.display = 'block';
                 document.getElementById('groupEmail').style.display = 'block';
                 
+                inputName.setAttribute('required', 'required');
+                document.getElementById('inputEmail').setAttribute('required', 'required');
+                
                 @if(!empty($loggedName))
-                    document.getElementById('inputName').value = '{{ $loggedName }}';
+                    inputName.value = '{{ $loggedName }}';
                 @endif
                 @if(!empty($loggedEmail))
                     document.getElementById('inputEmail').value = '{{ $loggedEmail }}';
                 @endif
+            }
+            
+            if (typeof updateRequiredAsterisks === 'function') {
+                updateRequiredAsterisks();
             }
         }
         

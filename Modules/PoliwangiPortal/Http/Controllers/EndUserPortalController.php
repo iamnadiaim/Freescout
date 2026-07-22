@@ -214,9 +214,11 @@ class EndUserPortalController extends Controller
         /*
      * Validasi data laporan.
      */
+        $reportType = $request->input('report_type', 'terbuka');
+
         $rules = [
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'name' => $reportType === 'terbuka' ? 'required|string|max:255' : 'nullable|string|max:255',
+            'email' => $reportType === 'terbuka' ? 'required|email|max:255' : 'nullable|email|max:255',
             'message' => 'required|string',
 
             'attachments' => 'nullable|array|max:10',
@@ -257,8 +259,6 @@ class EndUserPortalController extends Controller
             ? trim((string) $request->input('subject'))
             : 'New Ticket from End-User Portal';
             
-        $reportType = $request->input('report_type', 'biasa');
-        
         if ($reportType === 'anonim') {
             $subject = '[ANONIM] ' . $subject;
         }
@@ -267,9 +267,15 @@ class EndUserPortalController extends Controller
             $emailValue = strtolower(trim((string) session('end_user_portal_email')));
             $customer = Customer::findOrFail(session('end_user_portal_customer_id'));
         } else {
-            $nameValue = trim((string) $request->input('name'));
-            $emailValue = strtolower(trim((string) $request->input('email')));
-            $originalEmailInput = trim((string) $request->input('email'));
+            if ($reportType === 'anonim') {
+                $nameValue = '';
+                $emailValue = '';
+                $originalEmailInput = '';
+            } else {
+                $nameValue = trim((string) $request->input('name'));
+                $emailValue = strtolower(trim((string) $request->input('email')));
+                $originalEmailInput = trim((string) $request->input('email'));
+            }
 
             if ($originalEmailInput !== '') {
                 $emailRow = Email::whereRaw(
@@ -289,7 +295,7 @@ class EndUserPortalController extends Controller
                 $customer = $emailRow->customer;
             } else {
                 /*
-                 * Laporan tanpa email (Bisa Laporan Biasa Tanpa Email atau Pelaporan Anonim murni).
+                 * Laporan tanpa email (Bisa Laporan Terbuka Tanpa Email atau Pelaporan Anonim murni).
                  * Email dummy dibuat dengan format Kode Pelacak.
                  */
                 if ($reportType === 'anonim') {
@@ -299,11 +305,11 @@ class EndUserPortalController extends Controller
                     if ($nameValue === '') {
                         $nameValue = 'Pelapor Tanpa Nama';
                     }
-                    $domainDummy = '@biasa.local';
+                    $domainDummy = '@terbuka.local';
                 }
                 
-                // Format Kode Pelacak: WB-YYYY-XXXX (4 karakter acak)
-                $trackingCode = 'WB-' . date('Y') . '-' . strtoupper(\Illuminate\Support\Str::random(4));
+                // Format Kode Pelacak: WB-YYYY-XXXXXXXX (8 karakter acak)
+                $trackingCode = 'WB-' . date('Y') . '-' . strtoupper(\Illuminate\Support\Str::random(8));
                 $emailValue = strtolower($trackingCode) . $domainDummy;
                 
                 $customer = Customer::create(
@@ -334,7 +340,7 @@ class EndUserPortalController extends Controller
                     session()->flash('secret_tracking_code', $trackingCode);
                 } else {
                     // Masih menggunakan tracking code tapi bukan anonim murni
-                    session()->flash('secret_tracking_code_biasa', $trackingCode);
+                    session()->flash('secret_tracking_code_terbuka', $trackingCode);
                 }
             }
         }
@@ -476,6 +482,27 @@ class EndUserPortalController extends Controller
             );
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send notification: ' . $e->getMessage());
+        }
+
+        /*
+         * Kirim email konfirmasi dan tautan akses jika user memberikan email asli
+         */
+        $originalEmailInput = trim((string) $request->input('email'));
+        if ($originalEmailInput !== '' && $reportType === 'terbuka') {
+            $token = \Illuminate\Support\Str::random(60);
+            \Illuminate\Support\Facades\Cache::put('track_token_' . $token, $conversation->number, now()->addHours(24));
+            
+            $url = route('PoliwangiPortal.end_user_portal.track.verify', ['token' => $token]);
+            
+            try {
+                \App\Misc\Mail::setSystemMailDriver();
+                \Illuminate\Support\Facades\Mail::send('poliwangiportal::emails.tracking_link', ['url' => $url, 'conversation' => $conversation], function ($message) use ($originalEmailInput, $conversation) {
+                    $message->to($originalEmailInput)
+                            ->subject('Laporan Diterima - Tautan Akses Pelacakan #' . $conversation->number);
+                });
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send confirmation email: ' . $e->getMessage());
+            }
         }
 
         $mailbox->updateFoldersCounters();
@@ -1476,6 +1503,16 @@ class EndUserPortalController extends Controller
     }
     public function trackTicketSubmit(Request $request)
     {
+        $rateLimitKey = 'track_ticket_' . str_replace(':', '_', $request->ip());
+        if (\Illuminate\Support\Facades\Cache::has($rateLimitKey)) {
+            $attempts = \Illuminate\Support\Facades\Cache::increment($rateLimitKey);
+            if ($attempts > 5) {
+                return back()->withInput()->withErrors(['message' => 'Terlalu banyak percobaan. Silakan coba lagi setelah 1 menit.']);
+            }
+        } else {
+            \Illuminate\Support\Facades\Cache::put($rateLimitKey, 1, now()->addMinutes(1));
+        }
+
         if ($request->has('tracking_code')) {
             $request->validate([
                 'tracking_code' => 'required|string',
