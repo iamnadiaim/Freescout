@@ -230,7 +230,7 @@
             </p>
 
             {{-- SSO --}}
-            @if (\Module::has('PoliwangiSso') && \Module::find('PoliwangiSso')->isEnabled())
+            @if (\Module::isActive('poliwangisso'))
                 <a class="btn btn-sso"
                     href="{{ route('PoliwangiPortal.end_user_portal.sso.poliwangi', ['redirect' => url('/help')]) }}">
                     Masuk dengan SSO Poliwangi
