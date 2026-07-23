@@ -149,7 +149,15 @@
                     $('#save-this-reply-name').val('');
                     wrapper.find('.js-saved-replies-dropdown').removeClass('show');
                     wrapper.find('.js-saved-replies-toggle').removeClass('active');
-                    $('#saveThisReplyModal').modal('show');
+                    
+                    // Pastikan hanya ada 1 modal (hapus yang lama jika ada sisa dari AJAX sebelumnya)
+                    var modals = $('#saveThisReplyModal');
+                    if (modals.length > 1) {
+                        modals.not(':last').remove();
+                    }
+                    // Pindahkan ke body agar bebas dari z-index parent, lalu tampilkan
+                    $('#saveThisReplyModal').appendTo('body').modal('show');
+
                     setTimeout(function () {
                         $('#save-this-reply-name').focus();
                     }, 300);

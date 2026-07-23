@@ -1236,7 +1236,7 @@ class EndUserPortalController extends Controller
                     'url'   => $detailUrl,
                 ],
                 [
-                    'label' => '✅ Terima',
+                    'label' => '✅ Active',
                     'type'  => 'callback',
                     'value' => 'active_conversation_' . $conversation->id,
                 ],

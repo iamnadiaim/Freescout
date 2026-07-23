@@ -420,9 +420,9 @@ body.rich-editor-image-modal-open .modal-backdrop.in {
     z-index: 1060 !important;
 }
 
-/* Modal New Saved Reply berada di bawah backdrop biru */
+/* Modal New Saved Reply sekarang diletakkan DI ATAS backdrop biru (tapi di bawah modal image) */
 body.rich-editor-image-modal-open #savedReplyCreateForm {
-    z-index: 1050 !important;
+    z-index: 1065 !important;
 }
 
 /* Modal Insert Image paling depan */
