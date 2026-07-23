@@ -230,10 +230,12 @@
             </p>
 
             {{-- SSO --}}
-            <a class="btn btn-sso"
-                href="{{ route('PoliwangiPortal.end_user_portal.sso.poliwangi', ['redirect' => url('/help')]) }}">
-                Masuk dengan SSO Poliwangi
-            </a>
+            @if (\Module::has('PoliwangiSso') && \Module::find('PoliwangiSso')->isEnabled())
+                <a class="btn btn-sso"
+                    href="{{ route('PoliwangiPortal.end_user_portal.sso.poliwangi', ['redirect' => url('/help')]) }}">
+                    Masuk dengan SSO Poliwangi
+                </a>
+            @endif
 
             {{-- LOGIN EMAIL --}}
             <a class="btn btn-email"

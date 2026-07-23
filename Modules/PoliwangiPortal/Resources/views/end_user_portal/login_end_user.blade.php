@@ -261,13 +261,7 @@
                     Login
                 </button>
 
-                <div style="margin-top: 15px; text-align: center; margin-bottom: 15px;">
-                    <span style="color: #6b7c8f; font-size: 14px;">Atau</span>
-                </div>
-                
-                <a href="{{ route('PoliwangiPortal.end_user_portal.sso.poliwangi', ['redirect' => $redirectUrl]) }}" class="btn-login" style="display: flex; justify-content: center; align-items: center; text-decoration: none; background: #e0e0e0; color: #2f3d4a;">
-                    Login dengan SSO Poliwangi
-                </a>
+
 
                 <div class="login-link">
                     Belum punya akun?
