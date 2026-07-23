@@ -4,7 +4,7 @@ namespace Modules\PoliwangiSso\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+// use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Support\Str;
@@ -44,30 +44,43 @@ class PoliwangiSsoController extends Controller
             return redirect('/login')->with('error', 'OAuth Authorization denied.');
         }
 
-        // 1. Tukar Authorization Code dengan Access Token
-        $response = Http::asForm()->post(config('poliwangisso.oidc.url_access_token'), [
-            'grant_type'    => 'authorization_code',
-            'client_id'     => config('poliwangisso.oidc.client_id'),
-            'client_secret' => config('poliwangisso.oidc.client_secret'),
-            'redirect_uri'  => config('poliwangisso.oidc.redirect_uri') ?: route('poliwangisso.callback'),
-            'code'          => $request->get('code'),
-        ]);
+        $client = new \GuzzleHttp\Client();
 
-        if (!$response->successful()) {
+        // 1. Tukar Authorization Code dengan Access Token
+        try {
+            $response = $client->post(config('poliwangisso.oidc.url_access_token'), [
+                'form_params' => [
+                    'grant_type'    => 'authorization_code',
+                    'client_id'     => config('poliwangisso.oidc.client_id'),
+                    'client_secret' => config('poliwangisso.oidc.client_secret'),
+                    'redirect_uri'  => config('poliwangisso.oidc.redirect_uri') ?: route('poliwangisso.callback'),
+                    'code'          => $request->get('code'),
+                ],
+            ]);
+            $tokenData = json_decode($response->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            \Log::error('SSO Token Error: ' . $e->getMessage());
             return redirect('/login')->with('error', 'Failed to fetch access token.');
         }
 
-        $tokenData = $response->json();
-        $accessToken = $tokenData['access_token'];
-
-        // 2. Ambil data profil User dari server Laravel (SSO Poliwangi)
-        $userResponse = Http::withToken($accessToken)->get(config('poliwangisso.oidc.url_resource_owner_details'));
-
-        if (!$userResponse->successful()) {
-            return redirect('/login')->with('error', 'Failed to fetch user profiles.');
+        $accessToken = $tokenData['access_token'] ?? null;
+        if (!$accessToken) {
+            return redirect('/login')->with('error', 'Access token missing from response.');
         }
 
-        $remoteUser = $userResponse->json();
+        // 2. Ambil data profil User dari server Laravel (SSO Poliwangi)
+        try {
+            $userResponse = $client->get(config('poliwangisso.oidc.url_resource_owner_details'), [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Accept'        => 'application/json',
+                ],
+            ]);
+            $remoteUser = json_decode($userResponse->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            \Log::error('SSO Profile Error: ' . $e->getMessage());
+            return redirect('/login')->with('error', 'Failed to fetch user profiles.');
+        }
         
         // Pastikan server SSO mengembalikan field 'email'
         $email = $remoteUser['email'] ?? null; 

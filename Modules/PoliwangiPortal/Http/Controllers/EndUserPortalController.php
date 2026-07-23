@@ -1423,30 +1423,43 @@ class EndUserPortalController extends Controller
             return redirect()->route('PoliwangiPortal.end_user_portal.login_end_user')->withErrors(['email' => 'OAuth Authorization denied.']);
         }
 
-        // 1. Ambil Access Token
-        $response = \Illuminate\Support\Facades\Http::asForm()->post(config('poliwangisso.oidc.url_access_token'), [
-            'grant_type'    => 'authorization_code',
-            'client_id'     => config('poliwangisso.oidc.client_id'),
-            'client_secret' => config('poliwangisso.oidc.client_secret'),
-            'redirect_uri'  => config('poliwangisso.oidc.redirect_uri') ?: route('poliwangisso.callback'),
-            'code'          => $request->get('code'),
-        ]);
+        $client = new \GuzzleHttp\Client();
 
-        if (!$response->successful()) {
+        // 1. Ambil Access Token
+        try {
+            $response = $client->post(config('poliwangisso.oidc.url_access_token'), [
+                'form_params' => [
+                    'grant_type'    => 'authorization_code',
+                    'client_id'     => config('poliwangisso.oidc.client_id'),
+                    'client_secret' => config('poliwangisso.oidc.client_secret'),
+                    'redirect_uri'  => config('poliwangisso.oidc.redirect_uri') ?: route('poliwangisso.callback'),
+                    'code'          => $request->get('code'),
+                ],
+            ]);
+            $tokenData = json_decode($response->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            \Log::error('EndUser SSO Token Error: ' . $e->getMessage());
             return redirect()->route('PoliwangiPortal.end_user_portal.login_end_user')->withErrors(['email' => 'Gagal mengambil access token dari SSO.']);
         }
 
-        $tokenData = $response->json();
-        $accessToken = $tokenData['access_token'];
-
-        // 2. Ambil Profil User
-        $userResponse = \Illuminate\Support\Facades\Http::withToken($accessToken)->get(config('poliwangisso.oidc.url_resource_owner_details'));
-
-        if (!$userResponse->successful()) {
-            return redirect()->route('PoliwangiPortal.end_user_portal.login_end_user')->withErrors(['email' => 'Gagal mengambil data profil dari SSO.']);
+        $accessToken = $tokenData['access_token'] ?? null;
+        if (!$accessToken) {
+            return redirect()->route('PoliwangiPortal.end_user_portal.login_end_user')->withErrors(['email' => 'Access token missing dari respons SSO.']);
         }
 
-        $remoteUser = $userResponse->json();
+        // 2. Ambil Profil User
+        try {
+            $userResponse = $client->get(config('poliwangisso.oidc.url_resource_owner_details'), [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Accept'        => 'application/json',
+                ],
+            ]);
+            $remoteUser = json_decode($userResponse->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            \Log::error('EndUser SSO Profile Error: ' . $e->getMessage());
+            return redirect()->route('PoliwangiPortal.end_user_portal.login_end_user')->withErrors(['email' => 'Gagal mengambil data profil dari SSO.']);
+        }
         $emailValue = strtolower(trim($remoteUser['email'] ?? ''));
 
         if (!$emailValue) {
