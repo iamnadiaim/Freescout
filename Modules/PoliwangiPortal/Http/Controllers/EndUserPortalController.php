@@ -263,7 +263,8 @@ class EndUserPortalController extends Controller
             $subject = '[ANONIM] ' . $subject;
         }
 
-        if ($isLoggedInEndUser) {
+        // Jika user login namun memilih anonim, jangan kaitkan tiket dengan akunnya
+        if ($isLoggedInEndUser && $reportType !== 'anonim') {
             $emailValue = strtolower(trim((string) session('end_user_portal_email')));
             $customer = Customer::findOrFail(session('end_user_portal_customer_id'));
         } else {
