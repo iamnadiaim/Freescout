@@ -85,16 +85,6 @@ Route::group([
         'as'   => 'PoliwangiPortal.end_user_portal.logout',
     ]);
 
-    Route::get('/help/sso/poliwangi', [
-        'uses' => 'EndUserPortalController@redirectToPoliwangiSso',
-        'as'   => 'PoliwangiPortal.end_user_portal.sso.poliwangi',
-    ]);
-
-    Route::get('/help/sso/poliwangi/callback', [
-        'uses' => 'EndUserPortalController@handlePoliwangiSsoCallback',
-        'as'   => 'PoliwangiPortal.end_user_portal.sso.poliwangi.callback',
-    ]);
-
     Route::get('/help', [
         'uses' => 'EndUserPortalController@selectMailbox',
         'as'   => 'PoliwangiPortal.end_user_portal.select_mailbox',

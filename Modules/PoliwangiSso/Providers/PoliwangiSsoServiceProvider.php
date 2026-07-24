@@ -21,6 +21,8 @@ class PoliwangiSsoServiceProvider extends ServiceProvider
                     </a>
                   </div>';
         });
+        
+        \Modules\PoliwangiSso\Hooks\PortalAuthHook::register();
     }
 
     public function register()

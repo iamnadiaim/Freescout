@@ -229,12 +229,9 @@
                 Silakan pilih metode masuk untuk membuat laporan.
             </p>
 
-            {{-- SSO --}}
-            @if (\Module::isActive('poliwangisso'))
-                <a class="btn btn-sso"
-                    href="{{ route('PoliwangiPortal.end_user_portal.sso.poliwangi', ['redirect' => url('/help')]) }}">
-                    Masuk dengan SSO Poliwangi
-                </a>
+            {{-- ADDITIONAL AUTH METHODS (e.g., SSO - Injected via Hook) --}}
+            @if (class_exists('\Eventy'))
+                {!! \Eventy::action('portal.auth.methods', $redirect ?? url('/help')) !!}
             @endif
 
             {{-- LOGIN EMAIL --}}

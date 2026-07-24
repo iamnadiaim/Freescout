@@ -6,4 +6,15 @@ Route::group(['middleware' => 'web', 'namespace' => 'Modules\PoliwangiSso\Http\C
     
     // Alias untuk callback sesuai OIDC_REDIRECT_URI di production (https://laporpoliwangi.my.id/oidc/callback)
     Route::get('/oidc/callback', 'PoliwangiSsoController@handleProviderCallback');
+
+    // End User Portal SSO Routes
+    Route::get('/help/sso/poliwangi', [
+        'uses' => 'SsoController@redirectToPoliwangiSso',
+        'as'   => 'PoliwangiPortal.end_user_portal.sso.poliwangi',
+    ]);
+
+    Route::get('/help/sso/poliwangi/callback', [
+        'uses' => 'SsoController@handlePoliwangiSsoCallback',
+        'as'   => 'PoliwangiPortal.end_user_portal.sso.poliwangi.callback',
+    ]);
 });

@@ -35,6 +35,7 @@ class PoliwangiTimeTrackingServiceProvider extends ServiceProvider
     public function hooks()
     {
         \Modules\PoliwangiTimeTracking\Hooks\ConversationHook::register();
+        \Modules\PoliwangiTimeTracking\Hooks\ReportHook::register();
     }
 
     /**

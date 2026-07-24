@@ -5,7 +5,6 @@ namespace Modules\PoliwangiPortal\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Mailbox;
 use Illuminate\Routing\Controller;
-use Modules\PoliwangiCustomField\Models\CustomField;
 use Modules\PoliwangiPortal\Models\EndUserPortalSetting;
 
 class EndUserPortalSettingController extends Controller
@@ -45,18 +44,9 @@ class EndUserPortalSettingController extends Controller
             ]
         );
 
-        // Ambil custom fields milik mailbox ini hanya jika modul aktif
-        $customFields = collect();
-        if (\Module::isActive('poliwangicustomfield')) {
-            $customFields = CustomField::where('mailbox_id', $mailbox->id)
-                ->orderBy('id', 'asc')
-                ->get();
-        }
-
         return view('poliwangiportal::end_user_portal.setting', compact(
             'mailbox',
-            'setting',
-            'customFields'
+            'setting'
         ));
     }
 
@@ -70,13 +60,16 @@ class EndUserPortalSettingController extends Controller
         $mailbox = Mailbox::findOrFail($mailbox_id);
         $this->authorizeSettings($mailbox);
 
-        $request->validate([
+        $rules = [
             'submit_ticket_title' => 'required|string|max:255',
             'footer' => 'nullable|string',
-            'custom_fields' => 'nullable|array',
-            'custom_fields.*' => 'integer',
             'portal_url' => 'nullable|string|max:255',
-        ]);
+        ];
+
+        // Allow external modules to append validation rules
+        $rules = \Eventy::filter('portal.setting.validation_rules', $rules, $request, $mailbox);
+
+        $request->validate($rules);
 
         $setting = EndUserPortalSetting::firstOrCreate(
             [
@@ -95,44 +88,24 @@ class EndUserPortalSettingController extends Controller
             ]
         );
 
-        /*
-     * Ambil custom field yang dicentang dari form.
-     * Isinya harus berupa ID, contoh: [1, 2, 5]
-     */
-        $selectedCustomFields = $request->get('custom_fields', []);
-
-        /*
-     * Amankan data:
-     * hanya simpan custom field yang benar-benar milik mailbox ini.
-     */
-        $validCustomFieldIds = CustomField::where('mailbox_id', $mailbox->id)
-            ->whereIn('id', $selectedCustomFields)
-            ->pluck('id')
-            ->map(function ($id) {
-                return (int) $id;
-            })
-            ->toArray();
-
-        // Update hanya bagian End-User Portal atas
-        $setting->update([
+        $settingData = [
             'portal_url' => $request->portal_url ?: $setting->portal_url,
-
             'submit_ticket_title' => $request->submit_ticket_title,
-
-            // Simpan ID custom field, bukan nama field
-            'custom_fields' => json_encode($validCustomFieldIds),
-
             // Toggle bagian atas
             'subject_field' => $request->has('subject_field'),
             'consent_checkbox' => $request->has('consent_checkbox'),
             'show_ticket_numbers' => $request->has('show_ticket_numbers'),
-
             // Footer
             'footer' => $request->footer ?: '© {%year%} {%mailbox.name%}',
-
             // Checkbox bagian atas
             'only_existing_customers' => $request->has('only_existing_customers'),
-        ]);
+        ];
+
+        // Allow external modules to modify the setting data before saving
+        $settingData = \Eventy::filter('portal.setting.update_data', $settingData, $request, $mailbox);
+
+        // Update hanya bagian End-User Portal atas
+        $setting->update($settingData);
 
         return redirect()
             ->route('PoliwangiPortal.end_user_portal.setting', $mailbox->id)

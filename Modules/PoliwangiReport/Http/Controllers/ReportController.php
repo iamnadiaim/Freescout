@@ -9,9 +9,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Modules\PoliwangiTimeTracking\Models\TimeTrackingLog;
 
 class ReportController extends Controller
 {
@@ -118,68 +116,13 @@ class ReportController extends Controller
         $conversationQuery = Conversation::where('mailbox_id', $selectedMailboxId);
 
         /*
-        * Ambil custom field berdasarkan mailbox terpilih.
-        * Nanti field ini akan muncul sebagai filter tambahan.
+        * Filter berdasarkan field tambahan dari modul lain (opsional).
+        * Jika user memilih filter tertentu, conversation yang tampil
+        * hanya conversation yang sesuai filter tersebut.
         */
-        $customFields = collect();
-
-        if ($selectedMailboxId && \Module::isActive('poliwangicustomfield') && Schema::hasTable('custom_fields')) {
-            $customFields = DB::table('custom_fields')
-                ->where('mailbox_id', $selectedMailboxId)
-                ->orderBy('id', 'asc')
-                ->get()
-                ->map(function ($field) {
-                    $options = [];
-
-                    if (!empty($field->options)) {
-                        $decoded = json_decode($field->options, true);
-
-                        if (is_array($decoded)) {
-                            $options = $decoded;
-                        }
-                    }
-
-                    $field->options_array = $options;
-
-                    return $field;
-                });
-        }
-
-        /*
-        * Value custom field yang dipilih di filter.
-        * Bentuk request-nya:
-        * custom_fields[ID_FIELD] = value
-        */
-        $selectedCustomFields = $request->get('custom_fields', []);
-
-        if (!is_array($selectedCustomFields)) {
-            $selectedCustomFields = [];
-        }
-
-
-        /*
-        * Filter berdasarkan custom field.
-        * Jika user memilih custom field tertentu, conversation yang tampil
-        * hanya conversation yang punya value tersebut.
-        */
-        if (Schema::hasTable('custom_field_values')) {
-            foreach ($selectedCustomFields as $fieldId => $fieldValue) {
-                if ($fieldValue === null || $fieldValue === '') {
-                    continue;
-                }
-
-                $customConversationIds = DB::table('custom_field_values')
-                    ->where('custom_field_id', $fieldId)
-                    ->where('value', 'like', '%' . $fieldValue . '%')
-                    ->pluck('conversation_id')
-                    ->toArray();
-
-                $conversationQuery->whereIn('id', $customConversationIds);
-            }
-        }
+        $conversationQuery = \Eventy::filter('report.filter_conversation_query', $conversationQuery, $request);
 
         $mailboxConversationIds = $selectedMailboxId ? $conversationQuery->pluck('id')->toArray() : [];
-
 
         /*
          * Ambil thread/update operator sesuai mailbox, tanggal, type, dan tag.
@@ -243,21 +186,7 @@ class ReportController extends Controller
                     $query->orWhereBetween('closed_at', [$startDateTime, $endDateTime]);
                 }
             });
-        if (Schema::hasTable('custom_field_values')) {
-            foreach ($selectedCustomFields as $fieldId => $fieldValue) {
-                if ($fieldValue === null || $fieldValue === '') {
-                    continue;
-                }
-
-                $customConversationIds = DB::table('custom_field_values')
-                    ->where('custom_field_id', $fieldId)
-                    ->where('value', 'like', '%' . $fieldValue . '%')
-                    ->pluck('conversation_id')
-                    ->toArray();
-
-                $displayConversationQuery->whereIn('id', $customConversationIds);
-            }
-        }
+        $displayConversationQuery = \Eventy::filter('report.filter_conversation_query', $displayConversationQuery, $request);
 
         $conversations = $displayConversationQuery
             ->orderBy('updated_at', 'desc')
@@ -285,11 +214,8 @@ class ReportController extends Controller
  */
         $timeLogs = collect();
 
-        if (count($conversationIds) && Schema::hasTable('time_tracking_logs')) {
-            $timeLogs = TimeTrackingLog::whereIn('conversation_id', $conversationIds)
-                ->whereBetween('created_at', [$startDateTime, $endDateTime])
-                ->where('seconds', '>', 0)
-                ->get();
+        if (count($conversationIds)) {
+            $timeLogs = \Eventy::filter('report.time_tracking.get_logs', collect(), $conversationIds, $startDateTime, $endDateTime);
         }
 
         /*
@@ -629,8 +555,7 @@ class ReportController extends Controller
             'chartLabels'       => $chartLabels,
             'chartValues'       => $chartValues,
             'maxChartValue'     => $maxChartValue,
-            'customFields'         => $customFields,
-            'selectedCustomFields' => $selectedCustomFields,
+
             'chartMaxScale'     => $chartMaxScale,
             'chartScaleLabels'  => $chartScaleLabels,
             'timeTrackingSettings' => $timeTrackingSettings,

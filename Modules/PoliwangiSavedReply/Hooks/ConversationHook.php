@@ -35,6 +35,7 @@ class ConversationHook
         return null;
     }
 
+    //mengambil kategori saved reply
     private static function getSavedReplyCategories($mailbox)
     {
         return SavedReply::with([
@@ -54,6 +55,7 @@ class ConversationHook
             ->get();
     }
 
+    //menampilkan saved replies toolbar pada halaman detail conversation
     private static function registerSavedRepliesToolbar()
     {
         \Eventy::addAction('reply_form.after', function ($conversation) {
@@ -77,6 +79,7 @@ class ConversationHook
         }, 20);
     }
 
+    //menampilkan saved replies modal pada halaman detail
     private static function registerSavedRepliesModal()
     {
         \Eventy::addAction('conversation.after_threads', function ($conversation, $mailbox = null) {

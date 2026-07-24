@@ -20,6 +20,7 @@ class ConversationHook
         self::registerCreateEvent();
     }
 
+    // melacak mailbox
     private static function resolveMailbox($conversation, $mailbox = null)
     {
         if ($mailbox) {
@@ -37,6 +38,7 @@ class ConversationHook
         return null;
     }
 
+    //menampilkan custom field setelah subjek pada halaman detail
     private static function registerAfterSubjectBlock()
     {
         \Eventy::addAction('conversation.after_subject_block', function ($conversation, $mailbox = null) {
@@ -69,6 +71,7 @@ class ConversationHook
         }, 20);
     }
 
+    //menampilkan form pembuatan custom field pada halaman create conversation
     private static function registerCreateForm()
     {
         \Eventy::addAction('conversation.create_form.after_subject', function ($conversation, $mailbox = null, $thread = null) {
@@ -95,6 +98,7 @@ class ConversationHook
         }, 20, 3);
     }
 
+    //menyimpan custom field saat membuat conversation
     private static function registerCreateEvent()
     {
         \Illuminate\Support\Facades\Event::listen('App\Events\UserCreatedConversation', function ($event) {

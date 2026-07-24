@@ -38,6 +38,8 @@ class PoliwangiCustomFieldServiceProvider extends ServiceProvider
         \Modules\PoliwangiCustomField\Hooks\MailboxSettingsHook::register();
         \Modules\PoliwangiCustomField\Hooks\AssetHook::register();
         \Modules\PoliwangiCustomField\Hooks\PortalHook::register();
+        \Modules\PoliwangiCustomField\Hooks\PortalSettingHook::register();
+        \Modules\PoliwangiCustomField\Hooks\ReportHook::register();
     }
 
     /**

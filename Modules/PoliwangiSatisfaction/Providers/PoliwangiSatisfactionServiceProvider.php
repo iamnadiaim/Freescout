@@ -37,6 +37,7 @@ class PoliwangiSatisfactionServiceProvider extends ServiceProvider
         \Modules\PoliwangiSatisfaction\Hooks\ConversationHook::register();
         \Modules\PoliwangiSatisfaction\Hooks\MailboxSettingsHook::register();
         \Modules\PoliwangiSatisfaction\Hooks\EmailHook::register();
+        \Modules\PoliwangiSatisfaction\Hooks\PortalHook::register();
     }
 
     /**

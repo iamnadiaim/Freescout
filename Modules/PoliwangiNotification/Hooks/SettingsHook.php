@@ -46,7 +46,7 @@ class SettingsHook
         \Eventy::addFilter('settings.section_params', function ($params, $section) {
             if ($section === 'notification_channels') {
                 return [
-                    'template_vars' => [
+                    'template_vars' => [ //keranjang data
                         'notificationChannels' => NotificationChannel::with('mailbox')
                             ->orderBy('id', 'desc')
                             ->get(),

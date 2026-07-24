@@ -12,6 +12,7 @@ class MenuHook
             return;
         }
 
+        //menambahkan menu laporan pada navbar untuk user yang login
         \Eventy::addAction('menu.append', function () {
             $user = auth()->user();
 

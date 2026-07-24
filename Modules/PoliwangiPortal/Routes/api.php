@@ -20,7 +20,7 @@ Route::group([
 ], function () {
 
     Route::post('/notification/webhook/{type}', [
-        'uses' => 'NotificationWebhookController@handle',
+        'uses' => 'NotificationChannelController@webhook',
         'as'   => 'notification_channels.webhook',
     ]);
 
